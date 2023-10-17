@@ -773,7 +773,8 @@ BadgeButton::BadgeButton(QWidget *parent_)
 
     this->fore_color_ = WHITE_COLOR;
     this->bg_color_ = DARK_GRAY_COLOR;
-    this->bg_on_click_color_ = this->bg_color_.lighter(150);
+    this->bg_on_press_color_ = this->bg_color_.lighter(200);
+    this->bg_on_hover_color_ = this->bg_color_.lighter(150);
     this->bg_on_release_color_ = this->bg_color_;
     this->badge_color_ = QColor(230,56,25);
 
@@ -781,10 +782,14 @@ BadgeButton::BadgeButton(QWidget *parent_)
 }
 
 bool BadgeButton::eventFilter(QObject *obj_, QEvent *event_){
-    if(obj_ == this && event_->type() == QEvent::MouseButtonPress)
-        this->bg_color_ = this->bg_on_click_color_;
-    //else if(obj_ == this && event_->type() == QEvent::MouseButtonRelease)
-    //    this->bg_color_ = this->bg_on_release_color_;
+    if(obj_ == this && event_->type() == QEvent::MouseButtonPress){
+        is_pressed_ = true;
+        this->bg_color_ = this->bg_on_press_color_;
+    }
+    else if(obj_ == this && event_->type() == QEvent::MouseButtonRelease){
+        is_pressed_ = false;
+        this->bg_color_ = this->bg_on_release_color_;
+    }
 
     return false;
 };
@@ -809,7 +814,7 @@ void BadgeButton::paintEvent(QPaintEvent *event_){
     rect.setSize(QSize((int)(size-offset_x), (int)(size-offset_y)));
 
     if (this->underMouse())
-        this->bg_color_ = this->bg_color_.lighter(this->highlight_factor_);
+        this->bg_color_ = this->is_pressed_? this->bg_on_press_color_: this->bg_on_hover_color_;
     else
         this->bg_color_ = this->bg_on_release_color_;
 
@@ -838,7 +843,9 @@ void BadgeButton::paintEvent(QPaintEvent *event_){
 
 void BadgeButton::setBgColor_(QColor color){
     this->bg_color_ = color;
-    this->bg_on_click_color_ = this->bg_color_.lighter(150);
+    // Change also on press/release color background colors
+    this->bg_on_press_color_ = this->bg_color_.lighter(200);
+    this->bg_on_hover_color_ = this->bg_color_.lighter(150);
     this->bg_on_release_color_ = this->bg_color_;
     this->repaint();
 };

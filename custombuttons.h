@@ -352,6 +352,8 @@ private:
     unsigned int highlight_factor_ = 150;
     unsigned int notification_number_ = 0;
 
+    bool is_pressed_ = false;
+
     QPropertyAnimation *badge_anim_;
 
     QIcon icon_{":icons/speech-bubble.svg"};
