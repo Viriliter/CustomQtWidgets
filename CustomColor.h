@@ -1,0 +1,18 @@
+#ifndef CUSTOMCOLOR_H
+#define CUSTOMCOLOR_H
+
+#include <QtGui>
+
+const QColor GREEN_COLOR{137,218,103};
+const QColor FAINT_GREEN_COLOR{200,238,183};
+const QColor RED_COLOR{220,86,113};
+const QColor FAINT_RED_COLOR{237,165,180};
+const QColor GRAY_COLOR{221,221,221};
+const QColor FAINT_GRAY_COLOR{243,243,243};
+const QColor DARK_GRAY_COLOR{68,68,68};
+const QColor BLACK_COLOR{0,0,0};
+const QColor WHITE_COLOR{255,255,255};
+const QColor BLUE_COLOR{71,129,250};
+const QColor LIGHT_BLUE_COLOR{138,205,245};
+
+#endif // CUSTOMCOLOR_H
