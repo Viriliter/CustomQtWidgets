@@ -33,8 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
     groupB_custom_widgets->setObjectName(QString::fromUtf8("groupB_custom_widgets"));
     QGridLayout *layout_custom_widgets = new QGridLayout{};
 
+    QLabel *labelSwipeWidget = new QLabel("Swipe Widget");
+
     swipeWidget->setFixedSize(QSize(200,50));
-    layout_custom_widgets->addWidget(swipeWidget);
+    layout_custom_widgets->addWidget(labelSwipeWidget, 0, 0, 1, 1);
+    layout_custom_widgets->addWidget(swipeWidget, 0, 1, 1, 1);
 
     groupB_custom_widgets->setLayout(layout_custom_widgets);
 
@@ -46,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent)
     groupB_custom_text_edits->setObjectName(QString::fromUtf8("groupB_custom_text_edits"));
     QGridLayout *layout_custom_text = new QGridLayout{};
 
+    QLabel *labelCustomTextEdit = new QLabel("Custom Text Edit");
+    QLabel *labelBorderedTextEdit = new QLabel("Bordered Text Edit");
+    QLabel *labelBorderedTextLineEdit = new QLabel("Bordered Text Line Edit");
+
     customTextEdit->setText("This is CustomTextEdit");
     customTextEdit->setToolTip("Dynamic update");
     customLineEdit->setText("This is CustomLineEdit");
@@ -53,10 +60,12 @@ MainWindow::MainWindow(QWidget *parent)
     borderedTextEdit->setText("This is BorderedTextEdit");
     borderedTextLineEdit->setText("This is BorderedTextLineEdit");
 
-    //layout_custom_text->addWidget(borderedTextEdit);
-    //layout_custom_text->addWidget(borderedTextLineEdit);
-    //layout_custom_text->addWidget(customTextEdit);
-    //layout_custom_text->addWidget(customLineEdit);
+    //layout_custom_text->addWidget(labelCustomTextEdit, 0, 0, 1, 1);
+    //layout_custom_text->addWidget(customTextEdit, 0, 1, 1, 1);
+    //layout_custom_text->addWidget(labelBorderedTextEdit, 1, 0, 1, 1);
+    //layout_custom_text->addWidget(borderedTextEdit, 1, 1, 1, 1);
+    //layout_custom_text->addWidget(labelBorderedTextLineEdit, 2, 0, 1, 1);
+    //layout_custom_text->addWidget(borderedTextLineEdit, 2, 1, 1, 1);
 
     groupB_custom_text_edits->setLayout(layout_custom_text);
 
@@ -71,11 +80,22 @@ MainWindow::MainWindow(QWidget *parent)
     delayedToggleSwitchIOS->setChecked(false);
     delayedToggleSwitchAndroid->setChecked(false);
 
-    layout_custom_toggles->addWidget(toggleSwitchIOS);
-    layout_custom_toggles->addWidget(delayedToggleSwitchIOS);
-    layout_custom_toggles->addWidget(toggleSwitchAndroid);
-    layout_custom_toggles->addWidget(delayedToggleSwitchAndroid);
-    layout_custom_toggles->addWidget(toggleSwitch);
+    QLabel *labelToggleSwitchIOS = new QLabel("Toggle Switch (IOS)");
+    QLabel *labelDelayedToggleSwitchIOS = new QLabel("Delayed Toggle Switch (IOS)");
+    QLabel *labelToggleSwitchAndroid = new QLabel("Toggle Switch (Android)");
+    QLabel *labelDelayedToggleSwitchAndroid = new QLabel("Delayed Toggle Switch (Android)");
+    QLabel *labelToggleSwitch = new QLabel("Toggle Switch");
+
+    layout_custom_toggles->addWidget(labelToggleSwitchIOS, 0, 0, 1, 1);
+    layout_custom_toggles->addWidget(toggleSwitchIOS, 0, 1, 1, 1);
+    layout_custom_toggles->addWidget(labelDelayedToggleSwitchIOS, 1, 0, 1, 1);
+    layout_custom_toggles->addWidget(delayedToggleSwitchIOS, 1, 1, 1, 1);
+    layout_custom_toggles->addWidget(labelToggleSwitchAndroid, 2, 0, 1, 1);
+    layout_custom_toggles->addWidget(toggleSwitchAndroid, 2, 1, 1, 1);
+    layout_custom_toggles->addWidget(labelDelayedToggleSwitchAndroid, 3, 0, 1, 1);
+    layout_custom_toggles->addWidget(delayedToggleSwitchAndroid, 3, 1, 1, 1);
+    layout_custom_toggles->addWidget(labelToggleSwitch, 4, 0, 1, 1);
+    layout_custom_toggles->addWidget(toggleSwitch, 4, 1, 1, 1);
 
     groupB_custom_toggles->setLayout(layout_custom_toggles);
 
@@ -94,8 +114,13 @@ MainWindow::MainWindow(QWidget *parent)
     classicLedIndicator->startColorAnimation(QColor(255,0,0), QColor(255,255,255));
     realisticLedIndicator->startColorAnimation(QColor(255,0,0), QColor(255,255,255));
 
-    layout_custom_indicators->addWidget(classicLedIndicator);
-    layout_custom_indicators->addWidget(realisticLedIndicator);
+    QLabel *labelClassicLedIndicator = new QLabel("Classic Led Indicator");
+    QLabel *labelRealisticLedIndicator = new QLabel("Realistic Led Indicator");
+
+    layout_custom_indicators->addWidget(labelClassicLedIndicator, 0, 0, 1, 1);
+    layout_custom_indicators->addWidget(classicLedIndicator, 0, 1, 1, 1);
+    layout_custom_indicators->addWidget(labelRealisticLedIndicator, 1, 0, 1, 1);
+    layout_custom_indicators->addWidget(realisticLedIndicator, 1, 1, 1, 1);
 
     groupB_custom_indicators->setLayout(layout_custom_indicators);
 
@@ -112,8 +137,13 @@ MainWindow::MainWindow(QWidget *parent)
     dynamicTooltipLabel->setText("This is CustomLabel");
     dynamicTooltipLabel->setToolTip("Dynamic update");
 
-    layout_custom_labels->addWidget(highlightLabel);
-    layout_custom_labels->addWidget(dynamicTooltipLabel);
+    QLabel *labelHighlightLabel = new QLabel("Highlight Label");
+    QLabel *labelDynamicTooltipLabel = new QLabel("Dynamic Tooltip Label");
+
+    layout_custom_labels->addWidget(labelHighlightLabel, 0, 0, 1, 1);
+    layout_custom_labels->addWidget(highlightLabel, 0, 1, 1, 1);
+    layout_custom_labels->addWidget(labelDynamicTooltipLabel, 1, 0, 1, 1);
+    layout_custom_labels->addWidget(dynamicTooltipLabel, 1, 1, 1, 1);
 
     groupB_custom_labels->setLayout(layout_custom_labels);
 
@@ -129,13 +159,28 @@ MainWindow::MainWindow(QWidget *parent)
     fireButton->setFixedSize(QSize(150,150));
     panelButton->setFixedSize(QSize(100,50));
 
-    layout_custom_buttons->addWidget(activationButton);
-    layout_custom_buttons->addWidget(badgeButton);  // Bug in bg color after mouse click release
-    layout_custom_buttons->addWidget(connectionButton);
-    layout_custom_buttons->addWidget(fireButton);
-    layout_custom_buttons->addWidget(panelButton);
-    layout_custom_buttons->addWidget(flatButton);
-    layout_custom_buttons->addWidget(toggleButton);
+    QLabel *labelActivationButton = new QLabel("Activation Button");
+    QLabel *labelBadgeButton = new QLabel("Badge Button");
+    QLabel *labelConnectionButton = new QLabel("Connection Button");
+    QLabel *labelFireButton = new QLabel("Fire Button");
+    QLabel *labelPanelButton = new QLabel("Panel Button");
+    QLabel *labelFlatButton = new QLabel("Flat Button");
+    QLabel *labelToggleButton = new QLabel("Toggle Button");
+
+    layout_custom_buttons->addWidget(labelActivationButton, 0, 0, 1, 1);
+    layout_custom_buttons->addWidget(activationButton, 0, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelBadgeButton, 1, 0, 1, 1);  // Bug in bg color after mouse click release
+    layout_custom_buttons->addWidget(badgeButton, 1, 1, 1, 1);  // Bug in bg color after mouse click release
+    layout_custom_buttons->addWidget(labelConnectionButton, 2, 0, 1, 1);
+    layout_custom_buttons->addWidget(connectionButton, 2, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelFireButton, 3, 0, 1, 1);
+    layout_custom_buttons->addWidget(fireButton, 3, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelPanelButton, 4, 0, 1, 1);
+    layout_custom_buttons->addWidget(panelButton, 4, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelFlatButton, 5, 0, 1, 1);
+    layout_custom_buttons->addWidget(flatButton, 5, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelToggleButton, 6, 0, 1, 1);
+    layout_custom_buttons->addWidget(toggleButton, 6, 1, 1, 1);
 
     groupB_custom_buttons->setLayout(layout_custom_buttons);
 
@@ -147,8 +192,13 @@ MainWindow::MainWindow(QWidget *parent)
     groupB_custom_loading_bars->setObjectName(QString::fromUtf8("groupB_custom_loading_bars"));
     QGridLayout *layout_custom_loading_bars = new QGridLayout{};
 
-    layout_custom_loading_bars->addWidget(progressBar);
-    layout_custom_loading_bars->addWidget(circularProgressBar);
+    QLabel *labelProgressBar = new QLabel("Progress Bar");
+    QLabel *labelCircularProgressBar = new QLabel("Circular Progress Bar");
+
+    layout_custom_loading_bars->addWidget(labelProgressBar, 0, 0, 1, 1);
+    layout_custom_loading_bars->addWidget(progressBar, 0, 1, 1, 1);
+    layout_custom_loading_bars->addWidget(labelCircularProgressBar, 1, 0, 1, 1);
+    layout_custom_loading_bars->addWidget(circularProgressBar, 1, 1, 1, 1);
 
     this->progressBar->startProgressAnimation(0, 1, 5000, -1);
     this->circularProgressBar->startProgressAnimation(0, 1, 5000, -1);
