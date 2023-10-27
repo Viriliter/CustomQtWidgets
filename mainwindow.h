@@ -39,13 +39,13 @@ private:
     FireButton *fireButton = new FireButton{};
     PanelButton *panelButton = new PanelButton{};
     FlatButton *flatButton = new FlatButton{};
+    NavigationButton *backNavigationButton = new NavigationButton{NavigationButton::ButtonType::BackButton};
+    NavigationButton *nextNavigationButton = new NavigationButton{NavigationButton::ButtonType::NextButton};
 
     ToggleSwitchIOS *toggleSwitchIOS = new ToggleSwitchIOS{};
     DelayedToggleSwitchIOS *delayedToggleSwitchIOS = new DelayedToggleSwitchIOS{};
     ToggleSwitchAndroid *toggleSwitchAndroid = new ToggleSwitchAndroid{};
     DelayedToggleSwitchAndroid *delayedToggleSwitchAndroid = new DelayedToggleSwitchAndroid{};
-
-    ToggleButton *toggleButton = new ToggleButton{};
     ToggleSwitch *toggleSwitch = new ToggleSwitch{};
 
     ClassicLedIndicator *classicLedIndicator = new ClassicLedIndicator{};

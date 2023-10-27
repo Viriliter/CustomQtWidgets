@@ -158,6 +158,8 @@ MainWindow::MainWindow(QWidget *parent)
     connectionButton->setFixedSize(QSize(50,50));
     fireButton->setFixedSize(QSize(150,150));
     panelButton->setFixedSize(QSize(100,50));
+    backNavigationButton->setFixedSize(QSize(170,44));
+    nextNavigationButton->setFixedSize(QSize(170,44));
 
     QLabel *labelActivationButton = new QLabel("Activation Button");
     QLabel *labelBadgeButton = new QLabel("Badge Button");
@@ -165,7 +167,8 @@ MainWindow::MainWindow(QWidget *parent)
     QLabel *labelFireButton = new QLabel("Fire Button");
     QLabel *labelPanelButton = new QLabel("Panel Button");
     QLabel *labelFlatButton = new QLabel("Flat Button");
-    QLabel *labelToggleButton = new QLabel("Toggle Button");
+    QLabel *labelBackNavigationButton = new QLabel("Back Button");
+    QLabel *labelNextNavigationButton = new QLabel("Next Button");
 
     layout_custom_buttons->addWidget(labelActivationButton, 0, 0, 1, 1);
     layout_custom_buttons->addWidget(activationButton, 0, 1, 1, 1);
@@ -179,8 +182,10 @@ MainWindow::MainWindow(QWidget *parent)
     layout_custom_buttons->addWidget(panelButton, 4, 1, 1, 1);
     layout_custom_buttons->addWidget(labelFlatButton, 5, 0, 1, 1);
     layout_custom_buttons->addWidget(flatButton, 5, 1, 1, 1);
-    layout_custom_buttons->addWidget(labelToggleButton, 6, 0, 1, 1);
-    layout_custom_buttons->addWidget(toggleButton, 6, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelBackNavigationButton, 6, 0, 1, 1);
+    layout_custom_buttons->addWidget(backNavigationButton, 6, 1, 1, 1);
+    layout_custom_buttons->addWidget(labelNextNavigationButton, 7, 0, 1, 1);
+    layout_custom_buttons->addWidget(nextNavigationButton, 7, 1, 1, 1);
 
     groupB_custom_buttons->setLayout(layout_custom_buttons);
 
@@ -231,7 +236,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(toggleSwitchAndroid, SIGNAL(toggled(bool)), this, SLOT(toggledSwitchAndroid(bool)));
     QObject::connect(delayedToggleSwitchAndroid, SIGNAL(toggled(bool)), this, SLOT(toggledDelayedSwitchAndroid(bool)));
     QObject::connect(toggleSwitch, SIGNAL(toggled(bool)), this, SLOT(toggledSwitch(bool)));
-    QObject::connect(toggleButton, SIGNAL(toggled(bool)), this, SLOT(toggledButton(bool)));
+    QObject::connect(nextNavigationButton, SIGNAL(toggled(bool)), this, SLOT(toggledButton(bool)));
 
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(timeoutTimer()));
     timer->setParent(this);

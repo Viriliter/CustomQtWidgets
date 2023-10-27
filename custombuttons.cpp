@@ -377,6 +377,9 @@ PanelButton::PanelButton(QWidget *parent_)
     this->setParent(parent_);
 
     this->installEventFilter(this);
+    this->setCheckable(true);
+    this->setChecked(false);
+
     this->fore_color_ = QColor(0, 255, 0);
     this->bg_color_ = QColor(10, 10, 10);
     this->border_color_ = WHITE_COLOR;
@@ -385,9 +388,6 @@ PanelButton::PanelButton(QWidget *parent_)
     this->bg_on_hover_color_ = this->bg_color_.lighter(150);
     this->bg_on_press_color_ = this->bg_color_.lighter(300);
     this->bg_on_release_color_ = this->bg_color_;
-
-    this->checked_ = this->isChecked();
-    this->toggled_ = this->checked_;
 
     this->setSizePolicy(QSizePolicy::Expanding,
                         QSizePolicy::Expanding);
@@ -426,7 +426,7 @@ void PanelButton::paintEvent(QPaintEvent *event_){
 
     painter.setBrush(this->bg_color_);
     QColor text_color;
-    if (this->toggled_){
+    if (this->isChecked()){
         painter.setPen(QPen(this->checked_color_, border_thickness, Qt::PenStyle::SolidLine));
         text_color = this->checked_color_;
     }
@@ -460,21 +460,12 @@ void PanelButton::setIsBlinked_(bool is_blinked){
     this->is_blinked_ = is_blinked;
 };
 
-bool PanelButton::getChecked_() const{
-    return this->checked_;
-};
-
-void PanelButton::setChecked_(bool checked){
-    this->checked_ = checked;
-    this->repaint();
-};
-
 bool PanelButton::getToggled_() const{
-    return this->toggled_;
+    return this->isChecked();
 };
 
-void PanelButton::setToggled_(bool toggled){
-    this->toggled_ = toggled;
+void PanelButton::setToggled_(bool checked){
+    this->setChecked(checked);
     this->repaint();
 };
 
@@ -923,8 +914,11 @@ void BadgeButton::resetNotifyNumber(){
  * @param parent_
  */
 
-ToggleButton::ToggleButton(QWidget *parent_)
+NavigationButton::NavigationButton(QWidget *parent_)
 {
+    this->setParent(parent_);
+
+    setButtonType_(ButtonType::DefaultButton);
 
     this->setMouseTracking(true);
     this->installEventFilter(this);
@@ -938,15 +932,39 @@ ToggleButton::ToggleButton(QWidget *parent_)
     this->unchecked_color_ = QColor(60, 63, 65);
     this->checked_color_ = QColor(179, 255, 128);
 
-    this->orientation_ = ToggleOrientation::Vertical;
-
-    this->icon_on_ = "";
-    this->icon_off_ = "";
+    this->shadow_ = new QGraphicsDropShadowEffect{this};
+    this->shadow_->setOffset(0, 0);
+    this->shadow_->setColor(this->checked_color_);
+    this->setGraphicsEffect(this->shadow_);
 
     QObject::connect(this, SIGNAL(clicked()), this, SLOT(clickedSlot_()));
 }
 
-bool ToggleButton::eventFilter(QObject *obj_, QEvent *event_){
+NavigationButton::NavigationButton(const ButtonType button_type, QWidget *parent_)
+{
+    this->setParent(parent_);
+
+    setButtonType_(button_type);
+
+    this->setMouseTracking(true);
+    this->installEventFilter(this);
+    this->setCheckable(true);
+
+    this->bg_color_ = QColor(8, 13, 20);
+    this->fore_color_ = QColor(91, 192, 172);
+
+    this->unchecked_color_ = this->bg_color_;
+    this->checked_color_ = this->fore_color_;
+
+    this->shadow_ = new QGraphicsDropShadowEffect{this};
+    this->shadow_->setOffset(0, 0);
+    this->shadow_->setColor(this->checked_color_);
+    this->setGraphicsEffect(this->shadow_);
+
+    QObject::connect(this, SIGNAL(clicked()), this, SLOT(clickedSlot_()));
+}
+
+bool NavigationButton::eventFilter(QObject *obj_, QEvent *event_){
     if (obj_ == this and event_->type() == QEvent::MouseButtonPress)
         this->bg_color_ = this->bg_on_click_color_;
     if (obj_ == this and event_->type() == QEvent::MouseButtonRelease)
@@ -955,94 +973,143 @@ bool ToggleButton::eventFilter(QObject *obj_, QEvent *event_){
     return false;
 };
 
-void ToggleButton::paintEvent(QPaintEvent *event_){
+void NavigationButton::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
     painter.translate(0, 0);
-
-    int size = qMin<int>(this->width(), this->height());
-    this->setFixedSize(size, size);
-
-    QColor bg_color;
-    if (this->underMouse())
-        bg_color = this->bg_color_.lighter(this->highlight_factor_);
-    else
-        bg_color = this->bg_color_;
+    // 170x44 3.86
+    int width = qRound(this->height()*3.86);
+    int height = this->height();
+    int radius = height*.5;
+    int border_thickness = 2;
 
     // Draw Background
+    QRect base_rect;
+    base_rect.setSize(QSize(width-border_thickness*2, height-border_thickness*2));
+    base_rect.translate(border_thickness,
+                        border_thickness);
+
+    QColor bg_color, text_color;
+    bool is_checked = this->isChecked();
+
+    if (this->underMouse()) showShadow_();
+    else hideShadow_();
+
+    if(this->isEnabled()){
+        if(is_checked){
+            bg_color = this->checked_color_;
+            text_color = this->unchecked_color_;
+        }
+        else{
+            bg_color = this->unchecked_color_;
+            text_color = this->checked_color_;
+        }
+    }
+    else{
+        if(is_checked){
+            bg_color = this->checked_color_.lightness();
+            text_color = this->unchecked_color_.lightness();
+        }
+        else{
+            bg_color = this->unchecked_color_.lightness();
+            text_color = this->checked_color_.lightness();
+        }
+    }
+    painter.setPen(QPen(text_color, border_thickness, Qt::PenStyle::SolidLine));
     painter.setBrush(bg_color);
-    painter.drawRect(this->rect());
+    painter.drawRoundedRect(base_rect, radius-border_thickness, radius-border_thickness);
 
-    if (this->icon_on_ == "" || this->icon_off_ == "")
-        return;
+    // Draw Text
+    QFont text_font("Roboto", 20, QFont::Bold);
+    text_font.setPixelSize((int) (base_rect.height()*0.4));
 
-    // Draw Icon
-    QIcon icon{};
-    if (this->isChecked())
-        icon = QIcon(this->icon_on_);
-    else
-        icon = QIcon(this->icon_off_);
+    painter.setFont(text_font);
+    painter.drawText(base_rect, Qt::AlignCenter, this->text_);
 
-    auto pixmap = icon.pixmap(QSize(this->width(), this->height()));
-    QRectF source_pixmap(0, 0, this->width(), this->height());
-    QRectF target_pixmap(0, 0, (int) (this->width()*.5), (int) (this->height()*.5));
-    target_pixmap.translate((int) ((size-target_pixmap.width())*.5), (int) ((size-target_pixmap.height())*.5));
-    painter.drawPixmap(target_pixmap, pixmap, source_pixmap);
+    // Draw Arrow
+    QRect arrow_rect;
+    int arrow_size;
+    QPainterPath arrow_path;
+    switch(this->button_type_){
+        case(ButtonType::BackButton):
+            arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
+            arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
+            arrow_rect.translate((int)(arrow_size + base_rect.x()),
+                                 (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
+
+            arrow_path.moveTo(arrow_rect.right(), arrow_rect.top());
+            arrow_path.lineTo(arrow_rect.left(), arrow_rect.top() + arrow_rect.height()/2);
+            arrow_path.lineTo(arrow_rect.right(), arrow_rect.bottom());
+            painter.drawPath(arrow_path);
+            break;
+
+        case(ButtonType::NextButton):
+            arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
+            arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
+            arrow_rect.translate((int)(base_rect.width() - arrow_size*2 + base_rect.x()),
+                                 (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
+
+            arrow_path.moveTo(arrow_rect.left(), arrow_rect.top());
+            arrow_path.lineTo(arrow_rect.right(), arrow_rect.top() + arrow_rect.height()/2);
+            arrow_path.lineTo(arrow_rect.left(), arrow_rect.bottom());
+            painter.drawPath(arrow_path);
+            break;
+        case(ButtonType::FinishButton):
+            break;
+        default:
+            break;
+    }
+
 };
 
-qreal ToggleButton::getHighlightFactor_() const{
-    return this->highlight_factor_;
-};
-
-void ToggleButton::setHighlightFactor_(qreal value){
-    this->highlight_factor_ = value;
-};
-
-QColor ToggleButton::getUncheckedColor_() const{
+QColor NavigationButton::getUncheckedColor_() const{
     return this->unchecked_color_;
 };
 
-void ToggleButton::setUncheckedColor_(const QColor &color){
+void NavigationButton::setUncheckedColor_(const QColor &color){
     this->unchecked_color_ = color;
 };
 
-QColor ToggleButton::getCheckedColor_() const{
+QColor NavigationButton::getCheckedColor_() const{
     return this->checked_color_;
 };
 
-void ToggleButton::setCheckedColor_(const QColor &color){
+void NavigationButton::setCheckedColor_(const QColor &color){
     this->checked_color_ = color;
 };
 
-ToggleOrientation ToggleButton::getOrientation_() const{
-    return this->orientation_;
+void NavigationButton::setButtonType_(const ButtonType button_type){
+    this->button_type_ = button_type;
+
+    switch(this->button_type_){
+        case (ButtonType::BackButton):
+            this->text_ = "Back";
+            break;
+        case (ButtonType::NextButton):
+            this->text_ = "Next";
+            break;
+        case (ButtonType::FinishButton):
+            this->text_ = "Finish";
+            break;
+        default:
+            this->button_type_ = ButtonType::FinishButton;
+            this->text_ = "Finish";
+            break;
+    }
 };
 
-void ToggleButton::setOrientation_(ToggleOrientation orientation){
-    this->orientation_ = orientation;
-    this->repaint();
-};
+void NavigationButton::showShadow_(){
+    this->shadow_->setBlurRadius(20);
+    this->setGraphicsEffect(this->shadow_);
+}
 
-QString ToggleButton::getIconOn_() const{
-    return this->icon_on_;
-};
+void NavigationButton::hideShadow_(){
+    this->shadow_->setBlurRadius(0);
+    this->setGraphicsEffect(this->shadow_);
+}
 
-void ToggleButton::setIconOn_(const QString &icon){
-    this->icon_on_ = icon;
-    this->repaint();
-};
-
-QString ToggleButton::getIconOff_() const{
-    return this->icon_off_;
-};
-
-void ToggleButton::setIconOff_(const QString &icon){
-    this->icon_off_ = icon;
-    this->repaint();
-};
-
-void ToggleButton::setTheme(const std::map<QString, QString> &style){
+void NavigationButton::setTheme(const std::map<QString, QString> &style){
     QColor fore_color, bg_color, checked_color, unchecked_color;
 
     fore_color.setNamedColor(style.at("fore_color"));
@@ -1057,6 +1124,6 @@ void ToggleButton::setTheme(const std::map<QString, QString> &style){
     this->repaint();
 };
 
-void ToggleButton::clickedSlot_(){
+void NavigationButton::clickedSlot_(){
     emit this->toggled(this->isChecked());
 }

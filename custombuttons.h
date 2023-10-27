@@ -236,11 +236,9 @@ class PanelButton: public ICustomButton
     Q_OBJECT
 
     Q_PROPERTY(bool isBlinked READ getIsBlinked_ WRITE setIsBlinked_);
-    Q_PROPERTY(bool checked READ getChecked_ WRITE setChecked_);
+    Q_PROPERTY(bool checked READ getToggled_ WRITE setToggled_);
 private:
     bool is_blinked_ = false;
-    bool checked_ = false;
-    bool toggled_ = false;
 
     QPropertyAnimation *check_anim_;
 
@@ -248,14 +246,9 @@ private:
 
     void setIsBlinked_(bool is_blinked);
 
-    bool getChecked_() const;
-
-    void setChecked_(bool checked);
-
     bool getToggled_() const;
 
-    void setToggled_(bool toggled);
-
+    void setToggled_(bool checked);
 
 public:
     PanelButton(QWidget *parent_=nullptr);
@@ -397,24 +390,22 @@ enum ToggleOrientation{
     Horizontal
 };
 
-class ToggleButton: public ICustomButton
+class NavigationButton: public ICustomButton
 {
     Q_OBJECT
-    Q_PROPERTY(qreal highlightFactor READ getHighlightFactor_ WRITE setHighlightFactor_);
-    Q_PROPERTY(ToggleOrientation orientation READ getOrientation_ WRITE setOrientation_);
-    Q_PROPERTY(QString iconOn READ getIconOn_ WRITE setIconOn_);
-    Q_PROPERTY(QString iconOff READ getIconOff_ WRITE setIconOff_);
+public:
+    enum ButtonType{
+        DefaultButton,
+        BackButton,
+        NextButton,
+        FinishButton
+    };
 
 private:
-    qreal highlight_factor_ = 120;
+    QGraphicsDropShadowEffect *shadow_;
+    QString text_;
 
-    ToggleOrientation orientation_;
-    QString icon_on_;
-    QString icon_off_;
-
-    qreal getHighlightFactor_() const;
-
-    void setHighlightFactor_(qreal value);
+    ButtonType button_type_;
 
     QColor getUncheckedColor_() const;
 
@@ -424,27 +415,23 @@ private:
 
     void setCheckedColor_(const QColor &color);
 
-    ToggleOrientation getOrientation_() const;
-
-    void setOrientation_(ToggleOrientation orientation);
-
-    QString getIconOn_() const;
-
-    void setIconOn_(const QString &icon);
-
-    QString getIconOff_() const;
-
-    void setIconOff_(const QString &icon);
+    void setButtonType_(const ButtonType button_type);
 
 private slots:
     void clickedSlot_();
 
 public:
-    ToggleButton(QWidget *parent_=nullptr);
+    NavigationButton(QWidget *parent_=nullptr);
+
+    NavigationButton(const ButtonType button_type, QWidget *parent_=nullptr);
 
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+    void showShadow_();
+
+    void hideShadow_();
 
     void setTheme(const std::map<QString, QString> &style);
 
