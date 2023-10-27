@@ -4,8 +4,8 @@ CustomProgressBar::CustomProgressBar(QWidget *parent_)
 {
     this->setParent(parent_);
 
-    this->setFixedWidth(300);
-    this->setFixedHeight(30);
+    this->setFixedWidth(600);
+    this->setFixedHeight(60);
 
     this->fore_color_ = QColorConstants::Black;
     this->bg_color_ = QColor(221, 221, 221);
@@ -20,6 +20,7 @@ CustomProgressBar::CustomProgressBar(QWidget *parent_)
 void CustomProgressBar::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
     painter.translate(0,0);
 
     qreal width = this->width();
@@ -31,22 +32,24 @@ void CustomProgressBar::paintEvent(QPaintEvent *event_){
     // Draw progress slot
     qreal slot_width = full_rect.width();
     qreal slot_height = full_rect.height();
+    qreal slot_radius = full_rect.height()*.5;
     QRect slot_rect;
     slot_rect.setSize(QSize(slot_width, slot_height));
     slot_rect.translate(0, 0);
-    painter.setBrush(this->bg_color_);
-    painter.drawRoundedRect(slot_rect, slot_rect.height()*0.2, slot_rect.height()*0.2);
 
-    // Draw progress bar
-    if (this->progress_ != 0){
-        qreal bar_width = full_rect.width() * this->progress_;
-        qreal bar_height = full_rect.height();
-        QRect bar_rect;
-        bar_rect.setSize(QSize((int) bar_width, (int) bar_height));
-        bar_rect.translate(0, 0);
-        painter.setBrush(this->progress_color_);
-        painter.drawRoundedRect(bar_rect, bar_rect.height()*0.2, bar_rect.height()*0.2);
+    QLinearGradient progress_color{};
+    progress_color.setStart(0, 0);
+    progress_color.setFinalStop(slot_rect.width(), 0);
+    if (this->progress_ == 0)
+        painter.setBrush(this->bg_color_);
+    else{
+        progress_color.setColorAt(0, this->progress_color_);
+        progress_color.setColorAt(this->progress_, this->progress_color_);
+        progress_color.setColorAt(qMin<qreal>(this->progress_+0.001, 1), this->bg_color_);  // Create a sharp transition
+        if (this->progress_ != 1) progress_color.setColorAt(1, this->bg_color_);
     }
+    painter.setBrush(progress_color);
+    painter.drawRoundedRect(slot_rect, (int) slot_radius, (int) slot_radius);
 
     if(!this->progress_visibility_) return;
     // Draw text

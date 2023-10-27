@@ -31,11 +31,11 @@ void ToggleSwitch::paintEvent(QPaintEvent *event_){
     //painter.setPen(Qt::NoPen);
     painter.translate(0,0);
 
-    int border_weight = 2;
+    int border_thickness = 2;
     qreal width = this->width();
     qreal height = width*.5;
 
-    qreal radius = qMax<int>(qMin<int>(width, height)/2.0 - border_weight, 0);
+    qreal radius = qMax<int>(qMin<int>(width, height)/2.0 - border_thickness, 0);
 
     QColor button_color, slot_color, border_color;
     if (this->isEnabled()){
@@ -66,23 +66,23 @@ void ToggleSwitch::paintEvent(QPaintEvent *event_){
     // Draw border
     QPen pen;
     pen = QPen(border_color);
-    pen.setWidth(border_weight);
+    pen.setWidth(border_thickness);
     painter.setPen(pen);
 
     // Draw slot
     QRect slot_rect;
-    slot_rect.translate((int) (border_weight/2), (int) (border_weight/2));
-    slot_rect.setSize(QSize((int) (width - border_weight), (int) (height - border_weight)));
+    slot_rect.translate((int) (border_thickness), (int) (border_thickness));
+    slot_rect.setSize(QSize((int) (width - border_thickness*2), (int) (height - border_thickness*2)));
     painter.setBrush(slot_color);
     painter.drawRoundedRect(slot_rect, (int) radius, (int) radius);
 
     // Draw Button
     QRect sw_rect;
-    sw_rect.translate((int) border_weight, (int) border_weight);
+    sw_rect.translate((int) border_thickness, (int) border_thickness);
     sw_rect.setSize(QSize((int) (radius*2), (int) (radius*2)));
     painter.setBrush(button_color);
     if (this->isChecked())
-        sw_rect.moveLeft((int) (slot_rect.width() - radius*2));
+        sw_rect.moveLeft((int) (slot_rect.width() - radius*2) + border_thickness);
     painter.drawEllipse(sw_rect);
 
     // Draw Label

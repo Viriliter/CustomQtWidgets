@@ -284,32 +284,32 @@ void MainWindow::clickedFlatButton() noexcept{
 
 void MainWindow::toggledSwitchIOS(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::toggledDelayedSwitchIOS(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::toggledSwitchAndroid(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::toggledDelayedSwitchAndroid(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::toggledButton(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::toggledSwitch(bool toggled) noexcept{
     qInfo() << "Toggled!";
-    qInfo() << "Toggle Status: " + QString(toggled);
+    qInfo() << "Toggle Status: " + QString::number(toggled);
 };
 
 void MainWindow::timeoutTimer() noexcept{

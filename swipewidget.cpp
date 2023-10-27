@@ -7,11 +7,11 @@ SwipeWidget::SwipeWidget(QWidget *parent_)
     this->setMouseTracking(true);
     this->installEventFilter(this);
 
-    this->base_fore_color_ = WHITE_COLOR;
+    this->base_fore_color_ = QColorConstants::White;
     this->base_bg_color_ = QColor(5, 5, 5);
     this->swipe_fore_color_ = QColor(124, 124, 124);
     this->swipe_bg_color_ = QColor(166, 166, 166);
-    this->border_color_ = BLACK_COLOR;
+    this->border_color_ = QColorConstants::Black;
 
     last_pos_ = this->pos();
     text_anim_ = new QPropertyAnimation{this, "glarePos", this};
@@ -105,7 +105,6 @@ void SwipeWidget::paintEvent(QPaintEvent *event_){
     QRect text_rect(0, 0, (int) text_width, (int) text_height);
 
     QLinearGradient text_lin_color{};
-    text_lin_color.setStart(0, 0);
     text_lin_color.setStart(0, 0);
 
     if (this->isEnabled()){

@@ -802,7 +802,7 @@ void BadgeButton::paintEvent(QPaintEvent *event_){
     // Draw Background
     QRect rect{};
     rect.translate(0, (int) offset_y);
-    rect.setSize(QSize((int)(size-offset_x), (int)(size-offset_y)));
+    rect.setSize(QSize((int) (size-offset_x), (int) (size-offset_y)));
 
     if (this->underMouse())
         this->bg_color_ = this->is_pressed_? this->bg_on_press_color_: this->bg_on_hover_color_;
@@ -813,10 +813,10 @@ void BadgeButton::paintEvent(QPaintEvent *event_){
     painter.drawRoundedRect(rect, round_radius, round_radius);
 
     // Draw Icon
-    QPixmap pixmap = this->icon_.pixmap(QSize(size, size));
-    QRectF source_pixmap = QRectF(0, 0, size, size);
-    QRectF target_pixmap = QRectF(0, 0, size*.5, size*.5);
-    target_pixmap.translate(size*.25, size*.25);
+    QPixmap pixmap = this->icon_.pixmap(QSize((int) size, (int) size));
+    QRectF source_pixmap = QRectF(0, 0, (int) size, (int) size);
+    QRectF target_pixmap = QRectF(0, 0, (int) (size*.5), (int) (size*.5));
+    target_pixmap.translate((int) (size*.25), (int) (size*.25));
     painter.drawPixmap(target_pixmap, pixmap, source_pixmap);
 
     // Do not draw badge if there is no notification
@@ -825,7 +825,7 @@ void BadgeButton::paintEvent(QPaintEvent *event_){
     // Draw Badge
     QRect badge_rect{};
     badge_rect.translate((int) badge_offset_x, (int) badge_offset_y);
-    badge_rect.setSize(QSize((int)badge_size, (int)badge_size));
+    badge_rect.setSize(QSize((int) badge_size, (int) badge_size));
     painter.setBrush(this->badge_color_);
     painter.drawEllipse(badge_rect);
     painter.setPen(this->fore_color_);
