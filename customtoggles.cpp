@@ -178,11 +178,11 @@ void ToggleSwitchAndroid::paintEvent(QPaintEvent *event_){
     painter.translate(0,0);
 
     // Fixed ratios of toggle switch. Adapted from Android toggle button
-    qreal size = qMin<qreal>(this->width(), this->height());
-    qreal slot_width = size;
-    qreal slot_height = size * 0.3717;
-    qreal button_dia = size * 0.5398;
-    qreal travel = size * 0.4779;
+    qreal slot_width = this->width();
+    qreal slot_height = this->width() * 0.3717;
+    qreal button_dia = this->width() * 0.5398;
+    qreal travel = this->width() * 0.4779;
+    painter.translate(0, (int) (button_dia/2.0 - slot_height/4.0));
 
     QColor slot_color, switch_color;
     if (this->isEnabled()){
@@ -297,6 +297,7 @@ void DelayedToggleSwitchAndroid::paintEvent(QPaintEvent *event_){
     qreal slot_height = size * 0.3717;
     qreal button_dia = size * 0.5398;
     qreal travel = size * 0.4779;
+    painter.translate(0, (int) (button_dia/2.0 - slot_height/4.0));
 
     if (this->progress_ == 100){
         this->setChecked_(true);

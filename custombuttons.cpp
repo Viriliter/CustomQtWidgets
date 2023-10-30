@@ -10,100 +10,78 @@ ActivationButton::ActivationButton(QWidget *parent_)
     this->setParent(parent_);
 
     this->setMouseTracking(true);
-    this->installEventFilter(this);
-
     this->setCheckable(true);
     this->setFixedHeight(80);
     this->setFixedWidth(80);
 
-    this->fore_color_ = WHITE_COLOR;
-    this->bg_color_ = QColor(26,27,20,255);
-    this->glow_color_ = GREEN_COLOR;
+    this->bg_color_ = DARK_GRAY_COLOR;
+    this->unchecked_color_ = FAINT_GREEN_COLOR;
+    this->checked_color_ = GREEN_COLOR;
 
     this->shadow_ = new QGraphicsDropShadowEffect{this};
-    this->shadow_->setColor(QColor(0,0,0,77));
-    this->shadow_->setXOffset(1);
-    this->shadow_->setYOffset(1);
-    this->shadow_->setBlurRadius(this->width()*1.2);
+    this->shadow_->setBlurRadius(0);
+    this->shadow_->setOffset(0, 0);
+    this->shadow_->setColor(this->checked_color_);
     this->setGraphicsEffect(this->shadow_);
 
     glow_anim_ = new QPropertyAnimation{this, "glowSize", this};
 }
 
-bool ActivationButton::eventFilter(QObject *obj_, QEvent *event_){
-    if(obj_ == this && event_->type() == QEvent::MouseButtonPress)
-        this->glowAnimation();
-    if(obj_ == this && event_->type() == QEvent::MouseButtonRelease)
-        this->glow_anim_->stop();
-
-    return false;
-}
-
-void ActivationButton::enterEvent(QEvent *event_){
-    this->shadow_->setXOffset(0);
-    this->shadow_->setYOffset(0);
-    this->setStyleSheet("background-color:#45b545;");
-};
-
-void ActivationButton::leaveEvent(QEvent *event_){
-    this->shadow_->setXOffset(0);
-    this->shadow_->setYOffset(0);
-    this->setStyleSheet("background-color:yellow;");
-};
-
 void ActivationButton::paintEvent(QPaintEvent *event_){
-    QString label;
-    label = this->isChecked()? "ON": "OFF";
-
     QPainter painter{this};
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.translate(0,0);
+    painter.translate(0, 0);
 
     qreal size = (this->width()>this->height())? this->height(): this->width();
     qreal radius = size * 0.8;
+    int border_thickness = 2;
 
-    QRect full_rect;
-    full_rect.setSize(QSize(size, size));
+    QRect base_rect;
+    base_rect.setSize(QSize(size - border_thickness*2, size - border_thickness*2));
+    base_rect.translate(border_thickness, border_thickness);
+
+    QColor bg_color, fore_color;
+    if (this->isChecked()) fore_color = this->checked_color_;
+    else fore_color = this->unchecked_color_;
+
+    if (this->underMouse()) bg_color = bg_color_.lighter(150);
+    else bg_color = bg_color_;
+
+    painter.setPen(QPen(bg_color_, border_thickness, Qt::PenStyle::SolidLine));
 
     //Draw Glow
     QRect glow_rect;
-    glow_rect.setSize(QSize(size, size));
-    glow_rect.translate(0, 0);
-    QRadialGradient glow_grad{full_rect.center(), size/2};
+    glow_rect.setSize(base_rect.size());
+    glow_rect.translate(border_thickness, border_thickness);
 
-    QColor faint{this->glow_color_};
-    faint.setAlphaF(.5);
-
-    QColor faintest{this->glow_color_};
-    faintest.setAlphaF(0);
-
-    glow_grad.setStops(QGradientStops{QGradientStop{0, faint},
-                                      QGradientStop{1, faintest}});
-
-    QColor text_color;
-    if (this->isChecked()){
-        painter.setBrush(this->glow_color_);
-        text_color = this->glow_color_;
-    }
-    else{
-        painter.setBrush(this->glow_color_.lighter(150));
-        text_color = this->glow_color_.lighter(150);
-    }
+    painter.setBrush(fore_color);
     painter.drawEllipse(glow_rect);
 
     //Draw Background
     QRect rect;
     rect.setSize(QSize(radius, radius));
-    rect.translate((int) (size/2.0 - radius*0.5), (int) (size/2.0 - radius*0.5));
-    painter.setBrush(QBrush(bg_color_));
+    rect.translate((int) (base_rect.width()/2.0 - radius*0.5 + border_thickness), (int) (base_rect.height()/2.0 - radius*0.5 + border_thickness));
+    painter.setBrush(bg_color);
     painter.drawEllipse(rect);
 
-    //Draw icon
+    //Draw Text
+    QString label;
+    label = this->isChecked()? "ON": "OFF";
+
     QRect icon_rect;
-    icon_rect.setSize(QSize(size, size));
-    icon_rect.translate(0, 0);
-    painter.setPen(text_color);
+    icon_rect.setSize(base_rect.size());
+    icon_rect.translate(border_thickness, border_thickness);
+
+    QFont text_font("Verdana", 20, QFont::Bold);
+    text_font.setPixelSize((int) (icon_rect.height()*0.2));
+    painter.setPen(fore_color);
+    painter.setFont(text_font);
     painter.drawText(icon_rect, Qt::AlignCenter, label);
+
+    if (glow_anim_->state() != QPropertyAnimation::Running){
+        if (this->isChecked()) showShadow_();
+        else hideShadow_();
+    }
 };
 
 void ActivationButton::glowAnimation(){
@@ -117,6 +95,10 @@ void ActivationButton::glowAnimation(){
     this->glow_anim_->start();
 };
 
+void ActivationButton::stopGlowAnimation(){
+    if (this->glow_anim_->state() == QPropertyAnimation::Running) this->glow_anim_->stop();
+};
+
 int ActivationButton::getGlowSize_() const{
     return this->glow_size_;
 };
@@ -124,6 +106,16 @@ int ActivationButton::getGlowSize_() const{
 void ActivationButton::setGlowSize_(int glow_size){
     this->glow_size_ = glow_size;
 };
+
+void ActivationButton::showShadow_(){
+    this->shadow_->setBlurRadius(40);
+    this->setGraphicsEffect(this->shadow_);
+}
+
+void ActivationButton::hideShadow_(){
+    this->shadow_->setBlurRadius(0);
+    this->setGraphicsEffect(this->shadow_);
+}
 
 /**
  * @brief ConnectionButton::ConnectionButton
@@ -262,7 +254,7 @@ void ConnectionButton::pauseAnimation(){
 };
 
 void ConnectionButton::stopAnimation(){
-    this->connection_anim_->stop();
+    if (this->connection_anim_->state() == QPropertyAnimation::Running) this->connection_anim_->stop();
 };
 
 void ConnectionButton::setTheme(const std::map<QString, QString> &style){
@@ -443,9 +435,8 @@ void PanelButton::paintEvent(QPaintEvent *event_){
     int text_height = height;
     QRect text_rect(border_thickness, border_thickness, (int) text_width, (int) text_height);
 
-    // text_font = QtGui.QFont(QtGui.QFont("Verdana", 10, QtGui.QFont.Normal));
-    QFont text_font{};
-    // text_font.setPixelSize(int(min(width*0.1, height*0.3)));
+    QFont text_font("Verdana", 20, QFont::Bold);
+    text_font.setPixelSize((int) (text_rect.height()*0.3));
 
     painter.setPen(QPen(text_color, 2, Qt::PenStyle::SolidLine));
     painter.setFont(text_font);
@@ -957,6 +948,7 @@ NavigationButton::NavigationButton(const ButtonType button_type, QWidget *parent
     this->checked_color_ = this->fore_color_;
 
     this->shadow_ = new QGraphicsDropShadowEffect{this};
+    this->shadow_->setBlurRadius(0);
     this->shadow_->setOffset(0, 0);
     this->shadow_->setColor(this->checked_color_);
     this->setGraphicsEffect(this->shadow_);

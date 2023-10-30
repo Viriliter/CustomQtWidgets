@@ -4,8 +4,8 @@ CustomProgressBar::CustomProgressBar(QWidget *parent_)
 {
     this->setParent(parent_);
 
-    this->setFixedWidth(600);
-    this->setFixedHeight(60);
+    this->setFixedWidth(300);
+    this->setFixedHeight(30);
 
     this->fore_color_ = QColorConstants::Black;
     this->bg_color_ = QColor(221, 221, 221);
@@ -205,12 +205,13 @@ void CustomCircularProgressBar::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
-    painter.translate(4, 4);
+    painter.translate(0, 0);
 
     int size = qMin<int>(this->width(), this->height());
     qreal elapsed = this->progress_ * 360.0;
     qreal remained = 360.0 - elapsed;
 
+    painter.translate(size/4, size/4);
     painter.fillRect(this->rect(), Qt::transparent);
 
     QPainterPath path, path2;

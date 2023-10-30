@@ -140,6 +140,7 @@ private:
 
     int glow_size_ = 0;
     bool is_pressed_ = false;
+
     QPropertyAnimation *glow_anim_;
     QGraphicsDropShadowEffect *shadow_;
 
@@ -147,19 +148,18 @@ private:
 
     void setGlowSize_(int glow_size);
 
+    void showShadow_();
+
+    void hideShadow_();
+
 public:
     ActivationButton(QWidget *parent_=nullptr);
-
-    bool eventFilter(QObject *obj_, QEvent *event_);
-
-    void enterEvent(QEvent *event_);
-
-    void leaveEvent(QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
 
     void glowAnimation();
 
+    void stopGlowAnimation();
 };
 
 class ConnectionButton: public ICustomButton
@@ -402,10 +402,11 @@ public:
     };
 
 private:
-    QGraphicsDropShadowEffect *shadow_;
     QString text_;
 
     ButtonType button_type_;
+
+    QGraphicsDropShadowEffect *shadow_;
 
     QColor getUncheckedColor_() const;
 

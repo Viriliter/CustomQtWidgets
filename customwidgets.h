@@ -6,13 +6,19 @@
 #include <QtGui>
 #include <QtCore>
 #include <QtGlobal>
-#include <QApplication>
-#include <QLabel>
-#include <QToolTip>
-#include <QTextEdit>
-#include <QLineEdit>
+#include <QPlainTextEdit>
 
 #include "CustomColor.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define NEWLINE "\r\n"
+#elif defined(__APPLE__)
+    #define NEWLINE "\n"
+#elif defined(__linux__)
+    #define NEWLINE "\n"
+#else
+    #define NEWLINE "\n"
+#endif
 
 class CustomFileBrowser: public QWidget
 {
@@ -26,4 +32,34 @@ public:
     CustomFileBrowser(QWidget *parent_=nullptr);
 };
 
+class FastLogViewer: public QPlainTextEdit
+{
+    Q_OBJECT
+private:
+    unsigned int maxLineCount_ = 50000;
+    unsigned int refrashRate_;
+
+    QList<QString> bufferedLines;
+
+    QTimer *updateTimer_;
+
+    unsigned int getMaximumLine_() const;
+
+    void setMaximumLine_(unsigned int lineCount);
+
+public:
+    FastLogViewer(QWidget *parent_=nullptr);
+
+    void setMaximumLine(unsigned int lineCount);
+
+    void setRefreshRate(unsigned int refreshRate);
+
+    void addRaw(const QString &newRaw);
+
+    void addRaw(const QList<QString> &newRaws);
+
+    void updateContent();
+
+    void clearContent();
+};
 #endif // CUSTOMWIDGETS_H
