@@ -9,6 +9,9 @@
 
 #include "CustomColor.h"
 
+/**
+ * @brief The SwipeWidget class
+ */
 class SwipeWidget: public QWidget
 {
     Q_OBJECT
@@ -36,26 +39,66 @@ private:
 
     QPropertyAnimation *text_anim_;
 
+    /**
+     * @brief This private function sets base text of the widget.
+     * @param[in] base_text Base text
+     */
     void setBaseText_(const QString &base_text);
 
+    /**
+     * @brief This private function returns swipe button position.
+     * @return Swipe button position
+     */
     qreal getValue_() const;
 
+    /**
+     * @brief This private function sets swipe button position.
+     * @param[in] value Swipe button position
+     */
     void setValue_(qreal value);
 
+    /**
+     * @brief This private function returns position of the glare.
+     * @return Glare Position
+     */
     qreal getGlarePos_() const;
 
+    /**
+     * @brief This private function sets position of the glare.
+     * @param[in] glare_pos Glare Position
+     */
     void setGlarePos_(qreal glare_pos);
 
+    /**
+     * @brief This private function returns base text of the widget.
+     * @return Base text
+     */
     QString getBaseText_() const;
 
+    /**
+     * @brief This private function sets base text of the widget.
+     * @param[in] base_text Base text
+     */
     void setBaseText_(QString &base_text);
 
+    /**
+     * @brief This private function starts slide color mask animation.
+     */
     void startAnimation_();
 
+    /**
+     * @brief This private function pauses slide color mask animation.
+     */
     void pauseAnimation_();
 
+    /**
+     * @brief This private function resume slide color mask animation.
+     */
     void resumeAnimation_();
 
+    /**
+     * @brief This private function stops slide color mask animation.
+     */
     void stopAnimation_();
 
 protected:
@@ -70,10 +113,20 @@ protected:
 public:
     SwipeWidget(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets text of the button.
+     * @param[in] text Tex of the button
+     */
     void setTheme(const std::map<QString, QString> &style);
 
+    /**
+     * @brief This function sets widget to locked position.
+     */
     void lock();
 
+    /**
+     * @brief This function sets widget to unlocked position.
+     */
     void unlock();
 
 signals:

@@ -10,6 +10,9 @@
 
 #include "CustomColor.h"
 
+/**
+ * @brief The ToggleSwitch class
+ */
 class ToggleSwitch: public QPushButton
 {
     Q_OBJECT
@@ -28,12 +31,28 @@ private:
     QString state_1_text_;
     QString state_2_text_;
 
+    /**
+     * @brief This private function returns text of the button for State 1.
+     * @return Button text of State 1
+     */
     QString getState1Text_() const;
 
+    /**
+     * @brief This private function sets text of the button for State 1.
+     * @param[in] text Button text of State 1
+     */
     void setState1Text_(const QString &text);
 
+    /**
+     * @brief This private function returns text of the button for State 2.
+     * @return Button text of State 2
+     */
     QString getState2Text_() const;
 
+    /**
+     * @brief This private function sets text of the button for State 2.
+     * @param[in] text Button text of State 2
+     */
     void setState2Text_(const QString &text);
 
 private slots:
@@ -45,14 +64,26 @@ protected:
 public:
     ToggleSwitch(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets text of the button according to binary state.
+     * @param[in] state1 State 1
+     * @param[in] state1 State 2
+     */
     void setStates(const QString &state1, const QString &state2);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
 signals:
     void toggled(bool);
 };
 
+/**
+ * @brief The ToggleSwitchAndroid class
+ */
 class ToggleSwitchAndroid: public QPushButton
 {
     Q_OBJECT
@@ -71,9 +102,16 @@ protected:
 public:
     ToggleSwitchAndroid(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 };
 
+/**
+ * @brief The DelayedToggleSwitchAndroid class
+ */
 class DelayedToggleSwitchAndroid: public QPushButton
 {
     Q_OBJECT
@@ -89,18 +127,43 @@ private:
 
     QPropertyAnimation *wait_anim_;
 
+    /**
+     * @brief This private function return progress value of widget.
+     * @return Progress value
+     */
     qreal getProgress_() const;
 
+    /**
+     * @brief This private function sets progress value of widget.
+     * @param[in] value Progress value
+     */
     void setProgress_(qreal value);
 
+    /**
+     * @brief This private function returns check state.
+     * @param[in] value Check state
+     * @return Check state
+     */
     bool setChecked_(bool value);
 
+    /**
+     * @brief This private function starts loading animation.
+     */
     void startAnimation_();
 
+    /**
+     * @brief This private function stops loading animation.
+     */
     void stopAnimation_();
 
+    /**
+     * @brief This private function resumes loading animation.
+     */
     void resumeAnimation_();
 
+    /**
+     * @brief This private function pauses loading animation.
+     */
     void pauseAnimation_();
 
 protected:
@@ -111,10 +174,23 @@ protected:
 public:
     DelayedToggleSwitchAndroid(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
+    /**
+     * @brief This function returns check state.
+     * @return Check state
+     */
     bool isChecked() const;
 
+    /**
+     * @brief This function returns check state.
+     * @param[in] value Check state
+     * @return Check state
+     */
     bool setChecked(bool value);
 
 signals:
@@ -122,6 +198,9 @@ signals:
     void toggled(bool);
 };
 
+/**
+ * @brief The ToggleSwitchIOS class
+ */
 class ToggleSwitchIOS: public QPushButton
 {
     Q_OBJECT
@@ -140,12 +219,19 @@ protected:
 public:
     ToggleSwitchIOS(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
 signals:
     void toggled(bool);
 };
 
+/**
+ * @brief The DelayedToggleSwitchIOS class
+ */
 class DelayedToggleSwitchIOS: public QPushButton
 {
     Q_OBJECT
@@ -161,18 +247,42 @@ private:
 
     QPropertyAnimation *wait_anim_;
 
+    /**
+     * @brief This private function return progress value of widget.
+     * @return Progress value
+     */
     qreal getProgress_() const;
 
+    /**
+     * @brief This private function sets progress value of widget.
+     * @param[in] value Progress value
+     */
     void setProgress_(qreal value);
 
+    /**
+     * @brief This private function return check state.
+     * @return Check state
+     */
     bool setChecked_(bool value);
 
+    /**
+     * @brief This private function starts loading animation.
+     */
     void startAnimation_();
 
+    /**
+     * @brief This private function stops loading animation.
+     */
     void stopAnimation_();
 
+    /**
+     * @brief This private function resumes loading animation.
+     */
     void resumeAnimation_();
 
+    /**
+     * @brief This private function pauses loading animation.
+     */
     void pauseAnimation_();
 
 protected:
@@ -183,10 +293,23 @@ protected:
 public:
     DelayedToggleSwitchIOS(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
+    /**
+     * @brief This function returns check state.
+     * @return Check state
+     */
     bool isChecked() const;
 
+    /**
+     * @brief This function sets check state.
+     * @param[in] value Check state
+     * @return Check state
+     */
     bool setChecked(bool value);
 
 signals:

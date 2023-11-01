@@ -13,7 +13,10 @@
 
 #include "CustomColor.h"
 
-class ICustomButton: public QPushButton{
+/**
+ * @brief The ACustomButton class
+ */
+class ACustomButton: public QPushButton{
     Q_OBJECT
 
     Q_PROPERTY(QColor foreColor READ getForeColor_ WRITE setForeColor_);
@@ -127,11 +130,14 @@ protected:
     void setText_(const QString &text) { this->text_ = text; this->repaint(); };
 
 public:
-    ICustomButton(QWidget *parent_=nullptr){ this->setParent(parent_); };
+    ACustomButton(QWidget *parent_=nullptr){ this->setParent(parent_); };
 
 };
 
-class ActivationButton: public ICustomButton
+/**
+ * @brief The ActivationButton class
+ */
+class ActivationButton: public ACustomButton
 {
     Q_OBJECT
     Q_PROPERTY(int glowSize READ getGlowSize_ WRITE setGlowSize_);
@@ -144,12 +150,26 @@ private:
     QPropertyAnimation *glow_anim_;
     QGraphicsDropShadowEffect *shadow_;
 
+    /**
+     * @brief This private returns glow size.
+     * @return Size of glow
+     */
     int getGlowSize_() const;
 
+    /**
+     * @brief This private function sets glow size.
+     * @param[in] glow_size Size of glow
+     */
     void setGlowSize_(int glow_size);
 
+    /**
+     * @brief This private function shows shadow effect.
+     */
     void showShadow_();
 
+    /**
+     * @brief This private function hides shadow effect.
+     */
     void hideShadow_();
 
 protected:
@@ -158,11 +178,20 @@ protected:
 public:
     ActivationButton(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function starts glow animation.
+     */
     void startAnimation();
 
+    /**
+     * @brief This function stops glow animation.
+     */
     void stopGlowAnimation();
 };
 
+/**
+ * @brief The enumConnectionButtonStates enum
+ */
 enum enumConnectionButtonStates{
     Default,
     Connecting,
@@ -170,7 +199,10 @@ enum enumConnectionButtonStates{
     Disconnected
 };
 
-class ConnectionButton: public ICustomButton
+/**
+ * @brief The ConnectionButton class
+ */
+class ConnectionButton: public ACustomButton
 {
     Q_OBJECT
     Q_PROPERTY(qreal pathOffset READ getPathOffset_ WRITE setPathOffset_);
@@ -191,16 +223,36 @@ private:
 
     QPropertyAnimation *connection_anim_;
 
+    /**
+     * @brief This private function returns offset of dash of path
+     * @return Path offset
+     */
     qreal getPathOffset_() const;
 
+    /**
+     * @brief This private function sets offset of dash of path
+     * @param[in] offset Path offset
+     */
     void setPathOffset_(qreal offset);
 
+    /**
+     * @brief This private function starts connection animation.
+     */
     void startAnimation_();
 
+    /**
+     * @brief This private function resumes connection animation.
+     */
     void resumeAnimation_();
 
+    /**
+     * @brief This private function pause connection animation.
+     */
     void pauseAnimation_();
 
+    /**
+     * @brief This private function stop connection animation.
+     */
     void stopAnimation_();
 
 protected:
@@ -211,13 +263,24 @@ public:
 
     enumConnectionButtonStates getState() const;
 
+    /**
+     * @brief This function sets connection state.
+     * @param[in] state Connection state
+     */
     void setState(enumConnectionButtonStates state);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
 };
 
-class FlatButton: public ICustomButton
+/**
+ * @brief The FlatButton class
+ */
+class FlatButton: public ACustomButton
 {
     Q_OBJECT
 private:
@@ -230,15 +293,29 @@ protected:
 public:
     FlatButton(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function returns text of the button.
+     * @return Text of button
+     */
     QString getText() const;
 
+    /**
+     * @brief This function sets text of the button.
+     * @param[in] text Text of button
+     */
     void setText(const QString &text);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
-
 };
 
-class PanelButton: public ICustomButton
+/**
+ * @brief The PanelButton class
+ */
+class PanelButton: public ACustomButton
 {
     Q_OBJECT
 
@@ -249,12 +326,28 @@ private:
 
     QPropertyAnimation *check_anim_;
 
+    /**
+     * @brief This function returns blink condition.
+     * @return Blink condition
+     */
     bool getIsBlinked_() const;
 
+    /**
+     * @brief This function sets blink condition.
+     * @param[in] is_blinked Blink condition
+     */
     void setIsBlinked_(bool is_blinked);
 
+    /**
+     * @brief This private function returns toggle state of the button.
+     * @return Toggle state
+     */
     bool getToggled_() const;
 
+    /**
+     * @brief This private function sets toggle state of the button.
+     * @param[in] checked Toggle state
+     */
     void setToggled_(bool checked);
 
 protected:
@@ -265,15 +358,32 @@ protected:
 public:
     PanelButton(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function starts blink animation.
+     */
     void startAnimation();
 
+    /**
+     * @brief This function stops blink animation.
+     */
     void stopAnimation();
 
+    /**
+     * @brief This function returns tect of the button.
+     * @param text Text of the button
+     */
     void setText(const QString &text);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 };
 
+/**
+ * @brief The FireButton class
+ */
 class FireButton: public QWidget
 {
     Q_OBJECT
@@ -294,20 +404,52 @@ private:
 
     QPropertyAnimation *glow_anim_;
 
+    /**
+     * @brief This private function sets background color.
+     * @return Background color
+     */
     QColor getBgColor_() const;
 
+    /**
+     * @brief This private function sets background color.
+     * @param[in] color Background color
+     */
     void setBgColor_(const QColor color);
 
+    /**
+     * @brief This private function sets foreground color.
+     * @return Foreground color
+     */
     QColor getForeColor_() const;
 
+    /**
+     * @brief This private function sets foreground color.
+     * @param[in] color Foreground color
+     */
     void setForeColor_(const QColor color);
 
+    /**
+     * @brief This private function returns text of the button.
+     * @return Text of the button
+     */
     QString getText_() const;
 
+    /**
+     * @brief This private function sets text of the button.
+     * @param[in] text Text of the button
+     */
     void setText_(const QString &text);
 
+    /**
+     * @brief This private function returns glow diameter.
+     * @return Glow diameter
+     */
     qreal getGlowDia_() const;
 
+    /**
+     * @brief This private function sets glow diameter.
+     * @param[in] glow_dia Glow diameter
+     */
     void setGlowDia_(qreal glow_dia);
 
 protected:
@@ -324,16 +466,29 @@ protected:
 public:
     FireButton(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function starts glow animation.
+     */
     void startAnimation();
 
+    /**
+     * @brief This function stops glow animation.
+     */
     void stopAnimation();
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
+    /**
+     * @brief This function sets text of the button.
+     * @param[in] text Tex of the button
+     */
     void setText(const QString &text);
 
 private slots:
-
     void clicked_();
 
 signals:
@@ -341,7 +496,10 @@ signals:
     void pressed();
 };
 
-class BadgeButton: public ICustomButton
+/**
+ * @brief The BadgeButton class
+ */
+class BadgeButton: public ACustomButton
 {
     Q_OBJECT
     Q_PROPERTY(unsigned int highlightFactor READ getHighlightFactor_ WRITE setHighlightFactor_);
@@ -360,20 +518,51 @@ private:
 
     QIcon icon_{":icons/speech-bubble.png"};
 
+    /**
+     * @brief This private function sets background color.
+     * @param[in] color Background color
+     */
     void setBgColor_(QColor color);
 
+    /**
+     * @brief This private function returns highlight factor of background color of badge notification number.
+     * @returns Highlight factor
+     */
     unsigned int getHighlightFactor_();
 
+    /**
+     * @brief This private function sets highlight factor of background color of badge notification number.
+     * @param[in] highlight_factor Highlight factor
+     */
     void setHighlightFactor_(unsigned int highlight_factor);
 
+    /**
+     * @brief This private function returns background color of badge notification number.
+     * @return Background color of badge notification number
+     */
     QColor getBadgeColor_();
 
+    /**
+     * @brief This private function sets background color of badge notification number.
+     * @param[in] color Background color of badge notification number
+     */
     void setBadgeColor_(QColor color);
 
+    /**
+     * @brief This private function returns notification count.
+     * @returns Notification count
+     */
     unsigned int getNotifyNumber_();
 
+    /**
+     * @brief This private function sets notification count.
+     * @param[in] notification_number Notification count
+     */
     void setNotifyNumber_(unsigned int notification_number);
 
+    /**
+     * @brief This private function starts badge animation.
+     */
     void startAnimation_();
 
 protected:
@@ -386,21 +575,40 @@ public:
 
     unsigned int getNotifyNumber();
 
+    /**
+     * @brief This private function sets notification count.
+     * @param[in] notification_number Notification count
+     */
     void setNotifyNumber(unsigned int notification_number);
 
+    /**
+     * @brief This private function decreases notification count by 1.
+     */
     void decreaseNotifyNumber();
 
+    /**
+     * @brief This private function increases notification count by 1.
+     */
     void increaseNotifyNumber();
 
+    /**
+     * @brief This private function resets notification count to 0.
+     */
     void resetNotifyNumber();
 };
 
+/**
+ * @brief The ToggleOrientation enum
+ */
 enum ToggleOrientation{
     Vertical,
     Horizontal
 };
 
-class NavigationButton: public ICustomButton
+/**
+ * @brief The NavigationButton class
+ */
+class NavigationButton: public ACustomButton
 {
     Q_OBJECT
 public:
@@ -418,14 +626,34 @@ private:
 
     QGraphicsDropShadowEffect *shadow_;
 
+    /**
+     * @brief This private function returns unchecked color of the button.
+     * @return Unchecked color
+     */
     QColor getUncheckedColor_() const;
 
+    /**
+     * @brief This private function sets unchecked color of the button.
+     * @param[in] color Unchecked color
+     */
     void setUncheckedColor_(const QColor &color);
 
+    /**
+     * @brief This private function returns checked color of the button.
+     * @return Checked color
+     */
     QColor getCheckedColor_() const;
 
+    /**
+     * @brief This private function sets checked color of the button.
+     * @param[in] color Checked color
+     */
     void setCheckedColor_(const QColor &color);
 
+    /**
+     * @brief This private sets button type.
+     * @param[in] button_type Type of the button (ButtonType::DefaultButton | ButtonType::BackButton | ButtonType::NextButton | ButtonType::FinishButton)
+     */
     void setButtonType_(const ButtonType button_type);
 
 private slots:
@@ -441,10 +669,20 @@ public:
 
     NavigationButton(const ButtonType button_type, QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function shows shadow effect.
+     */
     void showShadow_();
 
+    /**
+     * @brief This function hides shadow effect.
+     */
     void hideShadow_();
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
 signals:

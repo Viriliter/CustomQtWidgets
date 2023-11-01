@@ -13,6 +13,9 @@
 
 #include "CustomColor.h"
 
+/**
+ * @brief The CustomTextEdit class
+ */
 class CustomTextEdit: public QTextEdit
 {
     Q_OBJECT
@@ -28,6 +31,9 @@ public:
     bool event(QEvent *event_);
 };
 
+/**
+ * @brief The CustomLineEdit class
+ */
 class CustomLineEdit: public QLineEdit
 {
     Q_OBJECT
@@ -44,6 +50,9 @@ public:
     void setToolTip(const QString &tooltip);
 };
 
+/**
+ * @brief The BorderedTextEdit class
+ */
 class BorderedTextEdit: public QTextEdit
 {
     Q_OBJECT
@@ -89,6 +98,9 @@ public:
     void setText(const QString &text);
 };
 
+/**
+ * @brief The BorderedTextLineEdit class
+ */
 class BorderedTextLineEdit: public QLineEdit
 {
     Q_OBJECT

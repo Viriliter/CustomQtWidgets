@@ -11,13 +11,17 @@
 
 #include "CustomColor.h"
 
-class ClassicLedIndicator: public QLabel
+
+/**
+ * @brief The ALedIndicator class
+ */
+class ALedIndicator: public QLabel
 {
     Q_OBJECT
 
     Q_PROPERTY(QColor color READ getColor_ WRITE setColor_);
     Q_PROPERTY(QColor defaultForeColor READ getDefaultForeColor_ WRITE setDefaultForeColor_);
-private:
+protected:
     QColor fore_color_;
     QColor default_fore_color_;
     QColor bg_color_;
@@ -26,77 +30,101 @@ private:
 
     QPropertyAnimation *color_anim_;
 
+    /**
+     * @brief This protected function returns LED color.
+     * @return LED color
+     */
     QColor getColor_() const;
 
+    /**
+     * @brief This protected function sets LED color.
+     * @param[in] color LED color
+     */
     void setColor_(const QColor &color);
 
+    /**
+     * @brief This protected function returns default LED color.
+     * @return default LED color
+     */
     QColor getDefaultForeColor_() const;
 
+    /**
+     * @brief This protected function sets default LED color.
+     * @param[in] color default LED color
+     */
     void setDefaultForeColor_(const QColor &color);
 
-protected:
-    void paintEvent(QPaintEvent *event_);
+    virtual void paintEvent(QPaintEvent *event_) = 0;
 
 public:
-    ClassicLedIndicator(QWidget *parent_=nullptr);
+    ALedIndicator(QWidget *parent_=nullptr);
 
+    /**
+     * @brief This function sets theme of the widget.
+     * @param[in] style style of theme
+     */
     void setTheme(const std::map<QString, QString> &style);
 
+    /**
+     * @brief This private function sets LED color.
+     * @param[in] color LED color
+     */
     void setColor(const QColor &color);
 
+    /**
+     * @brief This function sets glow feature of LED.
+     * @param[in] is_glowed glow is enabled if true
+     */
     void setGlow(bool is_glowed);
 
+    /**
+     * @brief This function starts blink animation of LED.
+     * The blink effect alternates two provided color in defined frequency and duration.
+     *
+     * @param[in] color1 Color1
+     * @param[in] color2 Color2
+     * @param[in] frequency frequency of blink in miliseconds
+     * @param[in] duration duration of blink in miliseconds
+     */
     void startColorAnimation(QColor color1, QColor color2, unsigned int frequency=1000, int duration=-1);
 
+    /**
+     * @brief This function stops blink animation.
+     */
     void stopColorAnimation();
 
+    /**
+     * @brief This function pauses blink animation.
+     */
     void pauseColorAnimation();
 
+    /**
+     * @brief This function resumes blink animation.
+     */
     void resumeColorAnimation();
+
 };
 
-class RealisticLedIndicator: public QLabel
+/**
+ * @brief The ClassicLedIndicator class
+ */
+class ClassicLedIndicator: public ALedIndicator
 {
     Q_OBJECT
 
-    Q_PROPERTY(QColor color READ getColor_ WRITE setColor_);
-    Q_PROPERTY(QColor defaultForeColor READ getDefaultForeColor_ WRITE setDefaultForeColor_);
-private:
-    QColor fore_color_;
-    QColor default_fore_color_;
-    QColor bg_color_;
+protected:
+    void paintEvent(QPaintEvent *event_);
+};
 
-    bool is_glowed_ = false;
-
-    QPropertyAnimation *color_anim_;
-
-    QColor getColor_() const;
-
-    void setColor_(const QColor &color);
-
-    QColor getDefaultForeColor_() const;
-
-    void setDefaultForeColor_(const QColor &color);
+/**
+ * @brief The RealisticLedIndicator class
+ */
+class RealisticLedIndicator: public ALedIndicator
+{
+    Q_OBJECT
 
 protected:
     void paintEvent(QPaintEvent *event_);
-
-public:
-    RealisticLedIndicator(QWidget *parent_=nullptr);
-
-    void setTheme(const std::map<QString, QString> &style);
-
-    void setColor(const QColor &color);
-
-    void setGlow(bool is_glowed);
-
-    void startColorAnimation(QColor color1, QColor color2, unsigned int frequency=1000, int duration=-1);
-
-    void stopColorAnimation();
-
-    void pauseColorAnimation();
-
-    void resumeColorAnimation();
 };
 
 #endif // CUSTOMINDICATORS_H

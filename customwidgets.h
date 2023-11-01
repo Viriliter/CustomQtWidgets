@@ -20,6 +20,9 @@
     #define NEWLINE "\n"
 #endif
 
+/**
+ * @brief The CustomFileBrowser class
+ */
 class CustomFileBrowser: public QWidget
 {
     Q_OBJECT
@@ -32,6 +35,9 @@ public:
     CustomFileBrowser(QWidget *parent_=nullptr);
 };
 
+/**
+ * @brief The FastLogViewer class
+ */
 class FastLogViewer: public QPlainTextEdit
 {
     Q_OBJECT

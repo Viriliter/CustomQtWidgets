@@ -206,7 +206,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout_custom_loading_bars->addWidget(circularProgressBar, 1, 1, 1, 1);
 
     this->progressBar->startAnimation(0, 1, 5000, -1);
-    this->circularProgressBar->startProgressAnimation(0, 1, 5000, -1);
+    this->circularProgressBar->startAnimation(0, 1, 5000, -1);
 
     groupB_custom_loading_bars->setLayout(layout_custom_loading_bars);
 

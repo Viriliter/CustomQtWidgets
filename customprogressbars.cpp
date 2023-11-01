@@ -1,20 +1,154 @@
 #include "customprogressbars.h"
 
-CustomProgressBar::CustomProgressBar(QWidget *parent_)
-{
+ACustomProgressBar::ACustomProgressBar(QWidget *parent_){
     this->setParent(parent_);
 
+    this->progress_text_ = "";
+
+    progress_anim_ = new QPropertyAnimation{this, "progress", this};
+    color_anim_ = new QPropertyAnimation{this, "progressColor", this};
+}
+
+QColor ACustomProgressBar::getForeColor_() const{
+    return this->fore_color_;
+};
+
+void ACustomProgressBar::setForeColor_(const QColor &color) {
+    this->fore_color_ = color; this->repaint();
+    this->repaint();
+};
+
+QColor ACustomProgressBar::getBgColor_() const{
+    return this->bg_color_;
+};
+
+void ACustomProgressBar::setBgColor_(const QColor &color) {
+    this->bg_color_ = color; this->repaint();
+    this->repaint();
+};
+
+QColor ACustomProgressBar::getProgressColor_() const{
+    return this->progress_color_;
+};
+
+void ACustomProgressBar::setProgressColor_(const QColor &color){
+    this->progress_color_ = color;
+    this->repaint();
+};
+
+qreal ACustomProgressBar::getProgress_() const{
+    return this->progress_;
+};
+
+void ACustomProgressBar::setProgress_(qreal value){
+    this->progress_ = value;
+    if (this->progress_ == 1.0) emit finished();
+    this->repaint();
+};
+
+QString ACustomProgressBar::getProgressText_() const{
+    return this->progress_text_;
+};
+
+void ACustomProgressBar::setProgressText_(const QString &text){
+    this->progress_text_ = text;
+    this->repaint();
+};
+
+void ACustomProgressBar::startAnimation(qreal start_value, qreal end_value,
+                                               qint64 duration, qint64 count){
+    if (this->progress_anim_->state() == QPropertyAnimation::Running) return;
+
+    this->progress_anim_->setDuration(duration); // Miliseconds, default: 1000ms
+    this->progress_anim_->setLoopCount(count);  // loop count of the animation, default: 1 (runs only once)
+
+    this->progress_anim_->setStartValue(start_value);
+    this->progress_anim_->setEndValue(end_value);
+    this->progress_anim_->start();
+};
+
+void ACustomProgressBar::stopAnimation(){
+    if (this->progress_anim_->state() == QPropertyAnimation::Running ||
+        this->progress_anim_->state() == QPropertyAnimation::Paused){
+        this->progress_ = 0;
+        this->repaint();
+        emit stopped();
+    }
+};
+
+void ACustomProgressBar::pauseAnimation(){
+    if (this->progress_anim_->state() == QPropertyAnimation::Running){
+        this->progress_anim_->pause();
+        emit paused();
+    }
+};
+
+void ACustomProgressBar::resumeAnimation(){
+    if (this->progress_anim_->state() == QPropertyAnimation::Paused) {
+        this->progress_anim_->resume();
+        emit resumed();
+    }
+};
+
+void ACustomProgressBar::animateColor(QColor start_value, QColor end_value,
+                                     qint64 duration, qint64 count){
+    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
+
+    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
+    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
+
+    this->color_anim_->setStartValue(start_value);
+    this->color_anim_->setEndValue(end_value);
+    this->color_anim_->start();
+};
+
+void ACustomProgressBar::animateFlash(qint64 duration, qint64 count){
+    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
+
+    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
+    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
+
+    QColor original_color = progress_color_;
+    this->color_anim_->setStartValue(original_color);
+    this->color_anim_->setKeyValueAt(0.5, original_color.lighter(200));
+    this->color_anim_->setEndValue(original_color.lighter(200));
+    this->color_anim_->start();
+};
+
+void ACustomProgressBar::setProgressVisibity(bool visibility){
+    this->progress_visibility_ = visibility;
+};
+
+void ACustomProgressBar::setProgress(qint64 progress, QString text){
+    this->setProgressText_(text);
+    this->setProgress_(progress);
+};
+
+qint64 ACustomProgressBar::getProgress() const{
+    return getProgress_();
+};
+
+void ACustomProgressBar::setTheme(const std::map<QString, QString> &style){
+    QColor foreground, background, progress;
+
+    foreground.setNamedColor(style.at("foreground"));
+    background.setNamedColor(style.at("background"));
+    progress.setNamedColor(style.at("progress"));
+
+    this->bg_color_ = background;
+    this->fore_color_ = foreground;
+    this->progress_color_ = progress;
+    this->repaint();
+};
+
+CustomProgressBar::CustomProgressBar(QWidget *parent_) : ACustomProgressBar(parent_)
+{
     this->setFixedWidth(300);
     this->setFixedHeight(30);
 
     this->fore_color_ = QColorConstants::Black;
     this->bg_color_ = QColor(221, 221, 221);
     this->progress_color_ = QColor(137, 218, 103);
-
-    this->progress_text_ = "";
-
-    progress_anim_ = new QPropertyAnimation{this, "progress", this};
-    color_anim_ = new QPropertyAnimation{this, "progressColor", this};
 }
 
 void CustomProgressBar::paintEvent(QPaintEvent *event_){
@@ -59,154 +193,14 @@ void CustomProgressBar::paintEvent(QPaintEvent *event_){
     painter.drawText(slot_rect, Qt::AlignCenter, QString(text));
 };
 
-QColor CustomProgressBar::getForeColor_() const{
-    return this->fore_color_;
-};
-
-void CustomProgressBar::setForeColor_(const QColor &color) {
-    this->fore_color_ = color; this->repaint();
-    this->repaint();
-};
-
-QColor CustomProgressBar::getBgColor_() const{
-    return this->bg_color_;
-};
-
-void CustomProgressBar::setBgColor_(const QColor &color) {
-    this->bg_color_ = color; this->repaint();
-    this->repaint();
-};
-
-QColor CustomProgressBar::getProgressColor_() const{
-    return this->progress_color_;
-};
-
-void CustomProgressBar::setProgressColor_(const QColor &color){
-    this->progress_color_ = color;
-    this->repaint();
-};
-
-qreal CustomProgressBar::getProgress_() const{
-    return this->progress_;
-};
-
-void CustomProgressBar::setProgress_(qreal value){
-    this->progress_ = value;
-    if (this->progress_ == 1.0) emit finished();
-    this->repaint();
-};
-
-QString CustomProgressBar::getProgressText_() const{
-    return this->progress_text_;
-};
-
-void CustomProgressBar::setProgressText_(const QString &text){
-    this->progress_text_ = text;
-    this->repaint();
-};
-
-void CustomProgressBar::startAnimation(qreal start_value, qreal end_value,
-                                               qint64 duration, qint64 count){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->progress_anim_->setDuration(duration); // Miliseconds, default: 1000ms
-    this->progress_anim_->setLoopCount(count);  // loop count of the animation, default: 1 (runs only once)
-
-    this->progress_anim_->setStartValue(start_value);
-    this->progress_anim_->setEndValue(end_value);
-    this->progress_anim_->start();
-};
-
-void CustomProgressBar::stopAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running ||
-        this->progress_anim_->state() == QPropertyAnimation::Paused){
-        this->progress_ = 0;
-        this->repaint();
-        emit stopped();
-    }
-};
-
-void CustomProgressBar::pauseAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running){
-        this->progress_anim_->pause();
-        emit paused();
-    }
-};
-
-void CustomProgressBar::resumeAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Paused) {
-        this->progress_anim_->resume();
-        emit resumed();
-    }
-};
-
-void CustomProgressBar::animateColor(QColor start_value, QColor end_value,
-                                     qint64 duration, qint64 count){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
-    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
-
-    this->color_anim_->setStartValue(start_value);
-    this->color_anim_->setEndValue(end_value);
-    this->color_anim_->start();
-};
-
-void CustomProgressBar::animateFlash(qint64 duration, qint64 count){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
-    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
-
-    QColor original_color = progress_color_;
-    this->color_anim_->setStartValue(original_color);
-    this->color_anim_->setKeyValueAt(0.5, original_color.lighter(200));
-    this->color_anim_->setEndValue(original_color.lighter(200));
-    this->color_anim_->start();
-};
-
-void CustomProgressBar::setProgressVisibity(bool visibility){
-    this->progress_visibility_ = visibility;
-};
-
-void CustomProgressBar::setProgress(qint64 progress, QString text){
-    this->setProgressText_(text);
-    this->setProgress_(progress);
-};
-
-qint64 CustomProgressBar::getProgress() const{
-    return getProgress_();
-};
-
-void CustomProgressBar::setTheme(const std::map<QString, QString> &style){
-    QColor foreground, background, progress;
-
-    foreground.setNamedColor(style.at("foreground"));
-    background.setNamedColor(style.at("background"));
-    progress.setNamedColor(style.at("progress"));
-
-    this->bg_color_ = background;
-    this->fore_color_ = foreground;
-    this->progress_color_ = progress;
-    this->repaint();
-};
-
-
-CustomCircularProgressBar::CustomCircularProgressBar(QWidget *parent_)
+CustomCircularProgressBar::CustomCircularProgressBar(QWidget *parent_) : ACustomProgressBar(parent_)
 {
-    this->setParent(parent_);
-
     this->setFixedWidth(100);
     this->setFixedHeight(100);
 
     this->fore_color_ = GREEN_COLOR;
     this->bg_color_ = FAINT_GREEN_COLOR;
     this->progress_color_ = QColor(137, 218, 103);
-
-    this->progress_text_ = "";
-
-    progress_anim_ = new QPropertyAnimation{this, "progress", this};
-    color_anim_ = new QPropertyAnimation{this, "progressColor", this};
 }
 
 void CustomCircularProgressBar::paintEvent(QPaintEvent *event_){
@@ -254,136 +248,4 @@ void CustomCircularProgressBar::paintEvent(QPaintEvent *event_){
     QString text;
     text = QString::number((int) ((int) (this->progress_*100) % 100)) + "%";
     painter.drawText(rect, Qt::AlignCenter, text);
-};
-
-QColor CustomCircularProgressBar::getForeColor_() const{
-    return this->fore_color_;
-};
-
-void CustomCircularProgressBar::setForeColor_(const QColor &color) {
-    this->fore_color_ = color; this->repaint();
-    this->repaint();
-};
-
-QColor CustomCircularProgressBar::getBgColor_() const{
-    return this->bg_color_;
-};
-
-void CustomCircularProgressBar::setBgColor_(const QColor &color) {
-    this->bg_color_ = color; this->repaint();
-    this->repaint();
-};
-
-QColor CustomCircularProgressBar::getProgressColor_() const{
-    return this->progress_color_;
-};
-
-void CustomCircularProgressBar::setProgressColor_(const QColor &color){
-    this->progress_color_ = color;
-    this->repaint();
-};
-
-qreal CustomCircularProgressBar::getProgress_() const{
-    return this->progress_;
-};
-
-void CustomCircularProgressBar::setProgress_(qreal value){
-    this->progress_ = value;
-    if (this->progress_ == 1.0) emit finished();
-    this->repaint();
-};
-
-QString CustomCircularProgressBar::getProgressText_() const{
-    return this->progress_text_;
-};
-
-void CustomCircularProgressBar::setProgressText_(const QString &text){
-    this->progress_text_ = text;
-    this->repaint();
-};
-
-void CustomCircularProgressBar::startProgressAnimation(qreal start_value, qreal end_value,
-                                               qint64 duration, qint64 count){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->progress_anim_->setDuration(duration); // Miliseconds, default: 1000ms
-    this->progress_anim_->setLoopCount(count);  // loop count of the animation, default: 1 (runs only once)
-
-    this->progress_anim_->setStartValue(start_value);
-    this->progress_anim_->setEndValue(end_value);
-    this->progress_anim_->start();
-};
-
-void CustomCircularProgressBar::stopProgressAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running ||
-        this->progress_anim_->state() == QPropertyAnimation::Paused){
-        this->progress_ = 0;
-        this->repaint();
-        emit stopped();
-    }
-};
-
-void CustomCircularProgressBar::pauseProgressAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Running){
-        this->progress_anim_->pause();
-        emit paused();
-    }
-};
-
-void CustomCircularProgressBar::resumeProgressAnimation(){
-    if (this->progress_anim_->state() == QPropertyAnimation::Paused) {
-        this->progress_anim_->resume();
-        emit resumed();
-    }
-};
-
-void CustomCircularProgressBar::animateColor(QColor start_value, QColor end_value,
-                                     qint64 duration, qint64 count){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
-    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
-
-    this->color_anim_->setStartValue(start_value);
-    this->color_anim_->setEndValue(end_value);
-    this->color_anim_->start();
-};
-
-void CustomCircularProgressBar::animateFlash(qint64 duration, qint64 count){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(duration);  // milliseconds , default:1000ms
-    this->color_anim_->setLoopCount(count);  // loop count of the animation, default:1 (runs only once)
-
-    QColor original_color = progress_color_;
-    this->color_anim_->setStartValue(original_color);
-    this->color_anim_->setKeyValueAt(0.5, original_color.lighter(200));
-    this->color_anim_->setEndValue(original_color.lighter(200));
-    this->color_anim_->start();
-};
-
-void CustomCircularProgressBar::setProgressVisibity(bool visibility){
-    this->progress_visibility_ = visibility;
-};
-
-void CustomCircularProgressBar::setProgress(qint64 progress, QString text){
-    this->setProgressText_(text);
-    this->setProgress_(progress);
-};
-
-qint64 CustomCircularProgressBar::getProgress() const{
-    return getProgress_();
-};
-
-void CustomCircularProgressBar::setTheme(const std::map<QString, QString> &style){
-    QColor foreground, background, progress;
-
-    foreground.setNamedColor(style.at("foreground"));
-    background.setNamedColor(style.at("background"));
-    progress.setNamedColor(style.at("progress"));
-
-    this->bg_color_ = background;
-    this->fore_color_ = foreground;
-    this->progress_color_ = progress;
-    this->repaint();
 };

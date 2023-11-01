@@ -1,6 +1,6 @@
 ﻿#include "customindicators.h"
 
-ClassicLedIndicator::ClassicLedIndicator(QWidget *parent_)
+ALedIndicator::ALedIndicator(QWidget *parent_)
 {
     this->setParent(parent_);
 
@@ -9,6 +9,81 @@ ClassicLedIndicator::ClassicLedIndicator(QWidget *parent_)
     this->bg_color_ = QColorConstants::Black;
     this->default_fore_color_ =  QColorConstants::White;
 }
+
+QColor ALedIndicator::getColor_() const{
+    return this->fore_color_;
+};
+
+void ALedIndicator::setColor_(const QColor &color){
+    this->fore_color_ = color;
+    this->repaint();
+};
+
+QColor ALedIndicator::getDefaultForeColor_() const{
+    return this->default_fore_color_;
+};
+
+void ALedIndicator::setDefaultForeColor_(const QColor &color){
+    this->default_fore_color_ = color;
+    this->repaint();
+};
+
+void ALedIndicator::setColor(const QColor &color){
+    this->stopColorAnimation();
+
+    this->setColor(color);
+    this->repaint();
+};
+
+void ALedIndicator::setGlow(bool is_glowed){
+    this->is_glowed_ = is_glowed;
+    this->repaint();
+};
+
+void ALedIndicator::startColorAnimation(QColor color1, QColor color2, unsigned int frequency, int duration){
+    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
+
+    this->color_anim_->setDuration(frequency);  // milliseconds , default:1000ms
+
+    if (duration == -1)  // It is infinite
+        this->color_anim_->setLoopCount(-1);  // Loop count of the animation, default:-1 (run only once)
+    else
+        this->color_anim_->setLoopCount(int(duration/frequency));
+
+    this->color_anim_->setStartValue(color1);
+    this->color_anim_->setEndValue(color2);
+    this->color_anim_->start();
+};
+
+void ALedIndicator::stopColorAnimation(){
+    if (this->color_anim_->state() == QPropertyAnimation::Running ||
+        this->color_anim_->state() == QPropertyAnimation::Paused){
+        this->fore_color_ = default_fore_color_;  // Set to default foreground
+        this->color_anim_->stop();
+    }
+};
+
+void ALedIndicator::pauseColorAnimation(){
+    if (this->color_anim_->state() == QPropertyAnimation::Running) this->color_anim_->pause();
+};
+
+void ALedIndicator::resumeColorAnimation(){
+    if (this->color_anim_->state() == QPropertyAnimation::Paused) this->color_anim_->resume();
+};
+
+void ALedIndicator::setTheme(const std::map<QString, QString> &style){
+    QColor foreground, default_foreground, background;
+
+    foreground.setNamedColor(style.at("foreground"));
+    default_foreground.setNamedColor(style.at("defaultForeground"));
+    background.setNamedColor(style.at("background"));
+
+    this->fore_color_ = foreground;
+    this->default_fore_color_ = default_foreground;
+    this->bg_color_ = background;
+
+    this->repaint();
+};
 
 void ClassicLedIndicator::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
@@ -47,93 +122,6 @@ void ClassicLedIndicator::paintEvent(QPaintEvent *event_){
     painter.setBrush(glowGrad);
     painter.drawEllipse(fullRect);
 };
-
-QColor ClassicLedIndicator::getColor_() const{
-    return this->fore_color_;
-};
-
-void ClassicLedIndicator::setColor_(const QColor &color){
-    this->fore_color_ = color;
-    this->repaint();
-};
-
-QColor ClassicLedIndicator::getDefaultForeColor_() const{
-    return this->default_fore_color_;
-};
-
-void ClassicLedIndicator::setDefaultForeColor_(const QColor &color){
-    this->default_fore_color_ = color;
-    this->repaint();
-};
-
-void ClassicLedIndicator::setColor(const QColor &color){
-    this->stopColorAnimation();
-
-    this->setColor(color);
-    this->repaint();
-};
-
-void ClassicLedIndicator::setGlow(bool is_glowed){
-    this->is_glowed_ = is_glowed;
-    this->repaint();
-};
-
-void ClassicLedIndicator::startColorAnimation(QColor color1, QColor color2, unsigned int frequency, int duration){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(frequency);  // milliseconds , default:1000ms
-
-    if (duration == -1)  // It is infinite
-        this->color_anim_->setLoopCount(-1);  // Loop count of the animation, default:-1 (run only once)
-    else
-        this->color_anim_->setLoopCount(int(duration/frequency));
-
-    this->color_anim_->setStartValue(color1);
-    this->color_anim_->setEndValue(color2);
-    this->color_anim_->start();
-};
-
-void ClassicLedIndicator::stopColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Running ||
-        this->color_anim_->state() == QPropertyAnimation::Paused){
-        this->fore_color_ = default_fore_color_;  // Set to default foreground
-        this->color_anim_->stop();
-    }
-};
-
-void ClassicLedIndicator::pauseColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) this->color_anim_->pause();
-};
-
-void ClassicLedIndicator::resumeColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Paused) this->color_anim_->resume();
-};
-
-void ClassicLedIndicator::setTheme(const std::map<QString, QString> &style){
-    QColor foreground, default_foreground, background;
-
-    foreground.setNamedColor(style.at("foreground"));
-    default_foreground.setNamedColor(style.at("defaultForeground"));
-    background.setNamedColor(style.at("background"));
-
-    this->fore_color_ = foreground;
-    this->default_fore_color_ = default_foreground;
-    this->bg_color_ = background;
-
-    this->repaint();
-};
-
-
-
-RealisticLedIndicator::RealisticLedIndicator(QWidget *parent_)
-{
-    this->setParent(parent_);
-
-    this->color_anim_ = new QPropertyAnimation{this, "color", this};
-    this->fore_color_ = QColorConstants::White;
-    this->bg_color_ = QColorConstants::Black;
-    this->default_fore_color_ =  QColorConstants::White;
-}
 
 void RealisticLedIndicator::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
@@ -194,79 +182,3 @@ void RealisticLedIndicator::paintEvent(QPaintEvent *event_){
     painter.setBrush(glowGrad);
     painter.drawEllipse(fullRect);
 };
-
-QColor RealisticLedIndicator::getColor_() const{
-    return this->fore_color_;
-};
-
-void RealisticLedIndicator::setColor_(const QColor &color){
-    this->fore_color_ = color;
-    this->repaint();
-};
-
-QColor RealisticLedIndicator::getDefaultForeColor_() const{
-    return this->default_fore_color_;
-};
-
-void RealisticLedIndicator::setDefaultForeColor_(const QColor &color){
-    this->default_fore_color_ = color;
-    this->repaint();
-};
-
-void RealisticLedIndicator::setColor(const QColor &color){
-    this->stopColorAnimation();
-
-    this->setColor(color);
-    this->repaint();
-};
-
-void RealisticLedIndicator::setGlow(bool is_glowed){
-    this->is_glowed_ = is_glowed;
-    this->repaint();
-};
-
-void RealisticLedIndicator::startColorAnimation(QColor color1, QColor color2, unsigned int frequency, int duration){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) return;
-
-    this->color_anim_->setDuration(frequency);  // milliseconds , default:1000ms
-
-    if (duration == -1)  // It is infinite
-        this->color_anim_->setLoopCount(-1);  // Loop count of the animation, default:-1 (run only once)
-    else
-        this->color_anim_->setLoopCount(int(duration/frequency));
-
-    this->color_anim_->setStartValue(color1);
-    this->color_anim_->setEndValue(color2);
-    this->color_anim_->start();
-};
-
-void RealisticLedIndicator::stopColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Running ||
-        this->color_anim_->state() == QPropertyAnimation::Paused){
-        this->fore_color_ = default_fore_color_;  // Set to default foreground
-        this->color_anim_->stop();
-    }
-};
-
-void RealisticLedIndicator::pauseColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Running) this->color_anim_->pause();
-};
-
-void RealisticLedIndicator::resumeColorAnimation(){
-    if (this->color_anim_->state() == QPropertyAnimation::Paused) this->color_anim_->resume();
-};
-
-void RealisticLedIndicator::setTheme(const std::map<QString, QString> &style){
-    QColor foreground, default_foreground, background;
-
-    foreground.setNamedColor(style.at("foreground"));
-    default_foreground.setNamedColor(style.at("defaultForeground"));
-    background.setNamedColor(style.at("background"));
-
-    this->fore_color_ = foreground;
-    this->default_fore_color_ = default_foreground;
-    this->bg_color_ = background;
-
-    this->repaint();
-};
-

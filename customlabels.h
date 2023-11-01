@@ -12,6 +12,9 @@
 
 #include "CustomColor.h"
 
+/**
+ * @brief The HighlightLabel class
+ */
 class HighlightLabel: public QLabel
 {
     Q_OBJECT
@@ -36,16 +39,40 @@ private:
 
     bool is_checked_ = false;
 
+    /**
+     * @brief This function returns checked stated.
+     * @return Checked state
+     */
     bool getIsChecked_() const;
 
+    /**
+     * @brief This function sets checked stated.
+     * @param[in] is_checked Checked state
+     */
     void setIsChecked_(bool is_checked);
 
+    /**
+     * @brief This protected function returns base background color.
+     * @return Base background color
+     */
     QColor getBaseBgColor_() const;
 
+    /**
+     * @brief This protected function sets base background color.
+     * @param[in] color Base background color
+     */
     void setBaseBgColor_(const QColor &color);
 
+    /**
+     * @brief This private function returns base foreground color.
+     * @return Base foreground color
+     */
     QColor getBaseForeColor_() const;
 
+    /**
+     * @brief This private function sets base foreground color.
+     * @param[in] color Base foreground color
+     */
     void setBaseForeColor_(const QColor &color);
 
 public:
@@ -53,7 +80,9 @@ public:
 
 };
 
-
+/**
+ * @brief The DynamicToolTipLabel class
+ */
 class DynamicToolTipLabel: public QLabel
 {
     Q_OBJECT
