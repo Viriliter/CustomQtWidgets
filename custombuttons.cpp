@@ -84,7 +84,7 @@ void ActivationButton::paintEvent(QPaintEvent *event_){
     }
 };
 
-void ActivationButton::glowAnimation(){
+void ActivationButton::startAnimation(){
     if (this->glow_anim_->state() == QPropertyAnimation::Running) return;
 
     this->glow_anim_->setDuration(1000);  // miliseconds, default:1000ms
@@ -131,25 +131,18 @@ ConnectionButton::ConnectionButton(QWidget *parent_)
 
     this->setCheckable(true);
 
-    this->fore_color_1_ = FAINT_GRAY_COLOR;
-    this->fore_color_2_ = GREEN_COLOR;
+    this->default_fore_color_ = FAINT_GRAY_COLOR;
+    this->connecting_fore_color_ = GREEN_COLOR;
+    this->connected_fore_color_ = GREEN_COLOR;
+    this->disconnected_fore_color_ = RED_COLOR;
+
     this->bg_color_ = DARK_GRAY_COLOR;
-    this->bg_default_color_ = this->bg_color_;
+
+    this->icon_color_1_ = this->default_fore_color_;
+    this->icon_color_2_ = this->default_fore_color_;
 
     connection_anim_ = new QPropertyAnimation{this, "pathOffset", this};
 }
-
-bool ConnectionButton::eventFilter(QObject *obj_, QEvent *event_){
-    return false;
-};
-
-void ConnectionButton::enterEvent(QEvent *event_){
-    this->bg_color_ = this->bg_color_.lighter(150);
-};
-
-void ConnectionButton::leaveEvent(QEvent *event_){
-    this->bg_color_ = this->bg_default_color_;
-};
 
 void ConnectionButton::paintEvent(QPaintEvent *event_){
     QPainter painter{this};
@@ -181,53 +174,46 @@ void ConnectionButton::paintEvent(QPaintEvent *event_){
     painter.translate((size-icon_width)/2, (size-icon_height)/2);
 
     QPainterPath path;
-    QPen pen{this->fore_color_1_, 5, Qt::PenStyle::SolidLine, Qt::FlatCap};
-    QPen pen_animation{this->fore_color_2_, 5, Qt::PenStyle::SolidLine, Qt::RoundCap};
+    QPen pen{this->icon_color_1_, 3, Qt::PenStyle::SolidLine, Qt::RoundCap, Qt::RoundJoin};
+    //QPen pen_animation{this->fore_color_2_, 5, Qt::PenStyle::SolidLine, Qt::RoundCap, Qt::RoundJoin};
 
-    path.moveTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.1875);  // 1
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.1875);  // 2
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top()); // 3
-    path.lineTo(icon_rect.left()                         , icon_rect.top() + icon_rect.height()*0.3125);  // 4
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.686);  // 5
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.5); // 6
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.5);  // 7
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.3125);  // 8
-    path.lineTo(icon_rect.right()                        , icon_rect.top() + icon_rect.height()*0.686);  // 9
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.bottom());  // 10
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.8125);  // 11
-    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.8125);  // 12
+    path.moveTo((int) (icon_rect.left() + icon_rect.width()*0.71), (int) (icon_rect.top() + icon_rect.height()*0.1875));  // 1
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.29), (int) (icon_rect.top() + icon_rect.height()*0.1875));  // 2
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.29), (int) (icon_rect.top())); // 3
+    path.lineTo((int) (icon_rect.left())                         , (int) (icon_rect.top() + icon_rect.height()*0.3125));  // 4
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.29), (int) (icon_rect.top() + icon_rect.height()*0.686));  // 5
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.29), (int) (icon_rect.top() + icon_rect.height()*0.5)); // 6
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.71), (int) (icon_rect.top() + icon_rect.height()*0.5));  // 7
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.71), (int) (icon_rect.top() + icon_rect.height()*0.3125));  // 8
+    path.lineTo((int) (icon_rect.right())                        , (int) (icon_rect.top() + icon_rect.height()*0.686));  // 9
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.71), (int) (icon_rect.bottom()));  // 10
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.71), (int) (icon_rect.top() + icon_rect.height()*0.8125));  // 11
+    path.lineTo((int) (icon_rect.left() + icon_rect.width()*0.29), (int) (icon_rect.top() + icon_rect.height()*0.8125));  // 12
 
-    QPainterPath path_animation{path};
-    qreal pattern_length = path_animation.length() * this->path_offset_;
-    QList<qreal> pattern;
-
-    pattern << path_animation.length()*0.5 << path_animation.length()*0.5 << path_animation.length()*0.5 << path_animation.length()*0.5;
-    pen_animation.setDashPattern(pattern);
-    pen_animation.setDashOffset((path_animation.length()*.5-pattern_length));
-
+    // Draw base icon
     painter.setPen(pen);
     painter.drawPath(path);
+    painter.setBrush(QColorConstants::Transparent);  // Set color to transparent since drawPath fills with setted brush in second path
+
+    // Draw animation only if connection is on connecting state
+    if (this->state_ != enumConnectionButtonStates::Connecting) return;
+
+    // Draw animating icon
+    qreal pattern_length = path.length() * this->path_offset_;
+    // Qt6 only supports QList in setDashPattern function of QPen object
+    #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+        QList<qreal> pattern;
+    #else
+        QVector<qreal> pattern;
+    #endif
+
+    pattern << path.length()*0.5 << path.length()*0.5 << path.length()*0.5 << path.length()*0.5;
+    pen.setDashPattern(pattern);
+    pen.setDashOffset((path.length()*0.5 - pattern_length));
+    pen.setBrush(this->icon_color_2_);
     painter.setPen(pen);
-    painter.setPen(pen_animation);
-    painter.drawPath(path_animation);
-    painter.setPen(pen);
+    painter.drawPath(path);
 
-};
-
-void ConnectionButton::setBgColor_(const QColor color){
-    this->bg_color_ = color;
-    this->bg_default_color_ = this->bg_color_;
-    this->repaint();
-};
-
-std::pair<QColor, QColor> ConnectionButton::getForeColors_() const{
-    return std::make_pair(this->fore_color_1_, this->fore_color_2_);
-};
-
-void ConnectionButton::setForeColors_(std::pair<QColor, QColor> colors){
-    this->fore_color_1_ = colors.first;
-    this->fore_color_2_ = colors.second;
-    this->repaint();
 };
 
 qreal ConnectionButton::getPathOffset_() const{
@@ -239,7 +225,7 @@ void ConnectionButton::setPathOffset_(qreal offset){
     this->repaint();
 };
 
-void ConnectionButton::connectionAnimation(){
+void ConnectionButton::startAnimation_(){
     if (this->connection_anim_->state() == QPropertyAnimation::Running) return;
 
     this->connection_anim_->setDuration(2000);  // Miliseconds, default: 250ms
@@ -251,26 +237,65 @@ void ConnectionButton::connectionAnimation(){
     this->connection_anim_->start();
 };
 
-void ConnectionButton::resumeAnimation(){
+void ConnectionButton::resumeAnimation_(){
     this->connection_anim_->resume();
 };
 
-void ConnectionButton::pauseAnimation(){
+void ConnectionButton::pauseAnimation_(){
     this->connection_anim_->pause();
 };
 
-void ConnectionButton::stopAnimation(){
+void ConnectionButton::stopAnimation_(){
     if (this->connection_anim_->state() == QPropertyAnimation::Running) this->connection_anim_->stop();
 };
 
+enumConnectionButtonStates ConnectionButton::getState() const{
+    return this->state_;
+};
+
+void ConnectionButton::setState(enumConnectionButtonStates state){
+    this->stopAnimation_();
+
+    this->state_ = state;
+
+    switch (state){
+        case(enumConnectionButtonStates::Connecting):
+            this->icon_color_1_ = this->default_fore_color_;
+            this->icon_color_2_ = this->connecting_fore_color_;
+            this->startAnimation_();
+            break;
+        case(enumConnectionButtonStates::Connected):
+            this->icon_color_1_ = this->connected_fore_color_;
+            this->icon_color_2_ = this->default_fore_color_;
+            break;
+        case(enumConnectionButtonStates::Disconnected):
+            this->icon_color_1_ = this->disconnected_fore_color_;
+            this->icon_color_2_ = this->default_fore_color_;
+            break;
+        default:
+            this->icon_color_1_ = this->default_fore_color_;
+            this->icon_color_2_ = this->default_fore_color_;
+            break;
+    }
+    this->update();
+};
+
 void ConnectionButton::setTheme(const std::map<QString, QString> &style){
-    QColor foreground, background;
+    QColor foreground, background, default_fore_color, connecting_fore_color, connected_fore_color, disconnected_fore_color;
     foreground.setNamedColor(style.at("foreground"));
     background.setNamedColor(style.at("background"));
+    default_fore_color.setNamedColor(style.at("default"));
+    connecting_fore_color.setNamedColor(style.at("connecting"));
+    connected_fore_color.setNamedColor(style.at("connected"));
+    disconnected_fore_color.setNamedColor(style.at("disconnected"));
 
-    this->fore_color_1_ = foreground;
-    this->fore_color_2_ = foreground;
+    this->default_fore_color_ = default_fore_color;
+    this->connecting_fore_color_ = connecting_fore_color;
+    this->connected_fore_color_ = connected_fore_color;
+    this->disconnected_fore_color_ = disconnected_fore_color;
     this->bg_color_ = background;
+
+    this->setState(this->state_);
 };
 
 /**
@@ -284,10 +309,10 @@ FlatButton::FlatButton(QWidget *parent_)
 
     this->installEventFilter(this);
     this->setCheckable(true);
-    this->fore_color_ = WHITE_COLOR;
+    this->fore_color_ = QColorConstants::White;
     this->bg_color_ = QColor(5, 5, 5);
     this->checked_color_ = this->bg_color_;
-    this->border_color_ = WHITE_COLOR;
+    this->border_color_ = QColorConstants::White;
 
     this->text_ = "Text";
 }
@@ -380,7 +405,7 @@ PanelButton::PanelButton(QWidget *parent_)
 
     this->fore_color_ = QColor(0, 255, 0);
     this->bg_color_ = QColor(10, 10, 10);
-    this->border_color_ = WHITE_COLOR;
+    this->border_color_ = QColorConstants::White;
     this->checked_color_ = QColor(0, 255, 0);
     this->unchecked_color_ = QColor(50, 50, 50);
     this->bg_on_hover_color_ = this->bg_color_.lighter(150);
@@ -522,12 +547,12 @@ FireButton::FireButton(QWidget *parent_)
 
     this->installEventFilter(this);
     this->bg_color_ = QColor(200, 0, 0);
-    this->fore_color_ = WHITE_COLOR;
+    this->fore_color_ = QColorConstants::White;
     this->text_ = QString("FIRE");
 
     QObject::connect(this, SIGNAL(pressed()), this, SLOT(clicked_()));
 
-    this->border_color_ = BLACK_COLOR;
+    this->border_color_ = QColorConstants::Black;
     this->is_active_ = false;
 
     this->glow_anim_ = new QPropertyAnimation{this, "glowDia", this};
@@ -537,12 +562,12 @@ FireButton::FireButton(QWidget *parent_)
 void FireButton::keyPressEvent(QKeyEvent *event_){
     //if (event_->key() == Qt::Key_Shift)
 
- };
+    };
 
 void FireButton::keyReleaseEvent(QKeyEvent *event_){
     //if (event_->key() == Qt::Key_Shift)
 
-};
+    };
 
 void FireButton::mousePressEvent(QMouseEvent *event_){
     if (event_->type() == QMouseEvent::MouseButtonPress){
@@ -706,7 +731,7 @@ void FireButton::setGlowDia_(qreal glow_dia){
     this->repaint();
 };
 
-void FireButton::startGlowAnimation(){
+void FireButton::startAnimation(){
     this->repaint();
     if (this->glow_anim_->state() == QPropertyAnimation::Running) return;
 
@@ -720,7 +745,7 @@ void FireButton::startGlowAnimation(){
     this->glow_anim_->start();
 };
 
-void FireButton::stopGlowAnimation(){
+void FireButton::stopAnimation(){
     if (this->glow_anim_->state() == QPropertyAnimation::Running){
         this->setGlowDia_(0);
         this->glow_anim_->stop();
@@ -759,7 +784,7 @@ BadgeButton::BadgeButton(QWidget *parent_)
     this->setFixedHeight(100);
     this->setFixedWidth(100);
 
-    this->fore_color_ = WHITE_COLOR;
+    this->fore_color_ = QColorConstants::White;
     this->bg_color_ = DARK_GRAY_COLOR;
     this->bg_on_press_color_ = this->bg_color_.lighter(200);
     this->bg_on_hover_color_ = this->bg_color_.lighter(150);
@@ -867,17 +892,17 @@ void BadgeButton::setNotifyNumber_(unsigned int notification_number){
         this->notification_number_ = 99;
 
     if (notification_number > this->notification_number_)
-        this->badgeAnimation();
+    this->startAnimation_();
 
     this->notification_number_ = notification_number;
     this->repaint();
 };
 
-void BadgeButton::badgeAnimation(){
+void BadgeButton::startAnimation_(){
     // Do not start new animation if it is already running. Fixes bug of stacked value on repeated start
     if (this->badge_anim_->state() == QPropertyAnimation::Running) return;
 
-    this->badge_anim_->setDuration(500);  // Milisecons, default: 250ms
+    this->badge_anim_->setDuration(500);  // Milisecons, default: 500ms
     this->badge_anim_->setLoopCount(1);  // loop count of the animation, default: 1 (runs only once)
 
     this->badge_anim_->setStartValue(this->badge_color_);
@@ -924,7 +949,7 @@ NavigationButton::NavigationButton(QWidget *parent_)
     this->bg_color_ = QColor(43, 43, 43);
     this->bg_on_click_color_ = this->bg_color_.lighter(150);
     this->bg_on_release_color_ = this->bg_color_;
-    this->fore_color_ = WHITE_COLOR;
+    this->fore_color_ = QColorConstants::White;
 
     this->unchecked_color_ = QColor(60, 63, 65);
     this->checked_color_ = QColor(179, 255, 128);
@@ -1030,33 +1055,33 @@ void NavigationButton::paintEvent(QPaintEvent *event_){
     int arrow_size;
     QPainterPath arrow_path;
     switch(this->button_type_){
-        case(ButtonType::BackButton):
-            arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
-            arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
-            arrow_rect.translate((int)(arrow_size + base_rect.x()),
-                                 (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
+    case(ButtonType::BackButton):
+        arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
+        arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
+        arrow_rect.translate((int)(arrow_size + base_rect.x()),
+                             (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
 
-            arrow_path.moveTo(arrow_rect.right(), arrow_rect.top());
-            arrow_path.lineTo(arrow_rect.left(), arrow_rect.top() + arrow_rect.height()/2);
-            arrow_path.lineTo(arrow_rect.right(), arrow_rect.bottom());
-            painter.drawPath(arrow_path);
-            break;
+        arrow_path.moveTo(arrow_rect.right(), arrow_rect.top());
+        arrow_path.lineTo(arrow_rect.left(), arrow_rect.top() + arrow_rect.height()/2);
+        arrow_path.lineTo(arrow_rect.right(), arrow_rect.bottom());
+        painter.drawPath(arrow_path);
+        break;
 
-        case(ButtonType::NextButton):
-            arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
-            arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
-            arrow_rect.translate((int)(base_rect.width() - arrow_size*2 + base_rect.x()),
-                                 (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
+    case(ButtonType::NextButton):
+        arrow_size = qMin<int>(base_rect.width()*0.2, base_rect.height()*0.25);
+        arrow_rect.setSize(QSize(arrow_size, arrow_size*1.6));
+        arrow_rect.translate((int)(base_rect.width() - arrow_size*2 + base_rect.x()),
+                             (int) ((base_rect.height()-arrow_rect.height())/2 + base_rect.y()));
 
-            arrow_path.moveTo(arrow_rect.left(), arrow_rect.top());
-            arrow_path.lineTo(arrow_rect.right(), arrow_rect.top() + arrow_rect.height()/2);
-            arrow_path.lineTo(arrow_rect.left(), arrow_rect.bottom());
-            painter.drawPath(arrow_path);
-            break;
-        case(ButtonType::FinishButton):
-            break;
-        default:
-            break;
+        arrow_path.moveTo(arrow_rect.left(), arrow_rect.top());
+        arrow_path.lineTo(arrow_rect.right(), arrow_rect.top() + arrow_rect.height()/2);
+        arrow_path.lineTo(arrow_rect.left(), arrow_rect.bottom());
+        painter.drawPath(arrow_path);
+        break;
+    case(ButtonType::FinishButton):
+        break;
+    default:
+        break;
     }
 
 };
@@ -1081,19 +1106,19 @@ void NavigationButton::setButtonType_(const ButtonType button_type){
     this->button_type_ = button_type;
 
     switch(this->button_type_){
-        case (ButtonType::BackButton):
-            this->text_ = "Back";
-            break;
-        case (ButtonType::NextButton):
-            this->text_ = "Next";
-            break;
-        case (ButtonType::FinishButton):
-            this->text_ = "Finish";
-            break;
-        default:
-            this->button_type_ = ButtonType::FinishButton;
-            this->text_ = "Finish";
-            break;
+    case (ButtonType::BackButton):
+        this->text_ = "Back";
+        break;
+    case (ButtonType::NextButton):
+        this->text_ = "Next";
+        break;
+    case (ButtonType::FinishButton):
+        this->text_ = "Finish";
+        break;
+    default:
+        this->button_type_ = ButtonType::FinishButton;
+        this->text_ = "Finish";
+        break;
     }
 };
 

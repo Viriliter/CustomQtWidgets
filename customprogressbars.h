@@ -50,24 +50,30 @@ private:
 
     QPropertyAnimation *progress_anim_;
     QPropertyAnimation *color_anim_;
-public:
-    CustomProgressBar(QWidget *parent_=nullptr);
 
+protected:
     void paintEvent(QPaintEvent *event_);
 
-    void startProgressAnimation(qreal start_value=0, qreal end_value=1, qint64 duration=1000, qint64 count=1);
-
-    void stopProgressAnimation();
-
-    void pauseProgressAnimation();
-
-    void resumeProgressAnimation();
+public:
+    CustomProgressBar(QWidget *parent_=nullptr);
+    
+    void startAnimation(qreal start_value=0, qreal end_value=1, qint64 duration=1000, qint64 count=1);
+    
+    void stopAnimation();
+    
+    void pauseAnimation();
+    
+    void resumeAnimation();
 
     void animateColor(QColor start_color, QColor end_value, qint64 duration=1000, qint64 count=1);
 
     void animateFlash(qint64 duration=1000, qint64 count=1);
 
     void setProgressVisibity(bool visibility);
+
+    void setProgress(qint64 progress, QString text="");
+
+    qint64 getProgress() const;
 
     void setTheme(const std::map<QString, QString> &style);
 
@@ -120,10 +126,11 @@ private:
 
     QPropertyAnimation *color_anim_;
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     CustomCircularProgressBar(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void startProgressAnimation(qreal start_value=0, qreal end_value=1, qint64 duration=1000, qint64 count=1);
 
@@ -138,6 +145,10 @@ public:
     void animateFlash(qint64 duration=1000, qint64 count=1);
 
     void setProgressVisibity(bool visibility);
+
+    void setProgress(qint64 progress, QString text="");
+
+    qint64 getProgress() const;
 
     void setTheme(const std::map<QString, QString> &style);
 

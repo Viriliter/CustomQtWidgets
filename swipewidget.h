@@ -50,9 +50,15 @@ private:
 
     void setBaseText_(QString &base_text);
 
-public:
-    SwipeWidget(QWidget *parent_=nullptr);
+    void startAnimation_();
 
+    void pauseAnimation_();
+
+    void resumeAnimation_();
+
+    void stopAnimation_();
+
+protected:
     void mouseMoveEvent(QMouseEvent *event_);
 
     bool eventFilter(QObject *obj_, QEvent *event_);
@@ -61,13 +67,8 @@ public:
 
     void resizeEvent(QResizeEvent *event_);
 
-    void startTextAnimation();
-
-    void pauseTextAnimation();
-
-    void resumeTextAnimation();
-
-    void stopTextAnimation();
+public:
+    SwipeWidget(QWidget *parent_=nullptr);
 
     void setTheme(const std::map<QString, QString> &style);
 

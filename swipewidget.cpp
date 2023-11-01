@@ -15,7 +15,7 @@ SwipeWidget::SwipeWidget(QWidget *parent_)
 
     last_pos_ = this->pos();
     text_anim_ = new QPropertyAnimation{this, "glarePos", this};
-    this->startTextAnimation();
+    this->startAnimation_();
 }
 
 void SwipeWidget::mouseMoveEvent(QMouseEvent *event_){
@@ -35,18 +35,18 @@ bool SwipeWidget::eventFilter(QObject *obj_, QEvent *event_){
     if (obj_ != this) return false;
 
     if (event_->type() == QEvent::MouseButtonPress){
-        this->pauseTextAnimation();
+        this->pauseAnimation_();
         this->is_mouse_pressed_ = true;
     }
 
     else if (event_->type() == QEvent::MouseButtonRelease){
-        this->resumeTextAnimation();
+        this->resumeAnimation_();
         this->is_mouse_pressed_ = false;
         if (this->value_ < 0.5){
             this->travel_value_ = 0;
             this->setValue_(0);
             if (this->last_value_ != 0){
-                this->startTextAnimation();
+                this->startAnimation_();
                 emit this->locked();
             }
             this->last_value_ = 0;
@@ -56,7 +56,7 @@ bool SwipeWidget::eventFilter(QObject *obj_, QEvent *event_){
             this->travel_value_ = 1;
             this->setValue_(1);
             if (this->last_value_ != 1){
-                this->stopTextAnimation();
+                this->stopAnimation_();
                 emit this->unlocked();
             }
             this->last_value_ = 1;
@@ -184,8 +184,8 @@ void SwipeWidget::paintEvent(QPaintEvent *event_){
 
 void SwipeWidget::resizeEvent(QResizeEvent *event_){
     this->repaint();
-    this->stopTextAnimation();
-    this->startTextAnimation();
+    this->stopAnimation_();
+    this->startAnimation_();
 };
 
 void SwipeWidget::setBaseText_(const QString &base_text){
@@ -218,7 +218,7 @@ void SwipeWidget::setBaseText_(QString &base_text){
     this->repaint();
 };
 
-void SwipeWidget::startTextAnimation(){
+void SwipeWidget::startAnimation_(){
     //if (this->text_anim_->state() == QAbstractAnimation::Running) return;
     if (this->text_anim_->state() == QPropertyAnimation::Running) return;
 
@@ -231,15 +231,15 @@ void SwipeWidget::startTextAnimation(){
     this->text_anim_->start();
 };
 
-void SwipeWidget::pauseTextAnimation(){
+void SwipeWidget::pauseAnimation_(){
     if (this->text_anim_->state() == QPropertyAnimation::Running) this->text_anim_->pause();
 };
 
-void SwipeWidget::resumeTextAnimation(){
+void SwipeWidget::resumeAnimation_(){
     if (this->text_anim_->state() == QPropertyAnimation::Paused) this->text_anim_->resume();
 };
 
-void SwipeWidget::stopTextAnimation(){
+void SwipeWidget::stopAnimation_(){
     if (this->text_anim_->state() == QPropertyAnimation::Running ||
         this->text_anim_->state() == QPropertyAnimation::Paused){
         this->glare_pos_ = 0;
@@ -269,7 +269,7 @@ void SwipeWidget::lock(){
     this->last_value_ = 0;
     this->value_ = 0;
     emit this->locked();
-    this->startTextAnimation();
+    this->startAnimation_();
 };
 
 void SwipeWidget::unlock(){
@@ -277,5 +277,5 @@ void SwipeWidget::unlock(){
     this->last_value_ = 1;
     this->value_ = 1;
     emit this->unlocked();
-    this->stopTextAnimation();
+    this->stopAnimation_();
 };

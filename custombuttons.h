@@ -152,60 +152,66 @@ private:
 
     void hideShadow_();
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     ActivationButton(QWidget *parent_=nullptr);
 
-    void paintEvent(QPaintEvent *event_);
-
-    void glowAnimation();
+    void startAnimation();
 
     void stopGlowAnimation();
+};
+
+enum enumConnectionButtonStates{
+    Default,
+    Connecting,
+    Connected,
+    Disconnected
 };
 
 class ConnectionButton: public ICustomButton
 {
     Q_OBJECT
-    Q_PROPERTY(std::pair<QColor, QColor> foreColors READ getForeColors_ WRITE setForeColors_);
     Q_PROPERTY(qreal pathOffset READ getPathOffset_ WRITE setPathOffset_);
 private:
-    QColor fore_color_1_;
-    QColor fore_color_2_;
+
+    QColor default_fore_color_;
+    QColor connecting_fore_color_;
+    QColor connected_fore_color_;
+    QColor disconnected_fore_color_;
+
+    QColor icon_color_1_;
+    QColor icon_color_2_;
 
     qreal path_offset_ = 0.0;
     bool is_pressed_ = false;
 
+    enumConnectionButtonStates state_ = enumConnectionButtonStates::Default;
+
     QPropertyAnimation *connection_anim_;
-
-    QColor convertHexToColor_(const QString &hex_value);
-
-    void setBgColor_(const QColor color);
-
-    std::pair<QColor, QColor> getForeColors_() const ;
-
-    void setForeColors_(const std::pair<QColor, QColor> colors);
 
     qreal getPathOffset_() const;
 
     void setPathOffset_(qreal offset);
 
+    void startAnimation_();
+
+    void resumeAnimation_();
+
+    void pauseAnimation_();
+
+    void stopAnimation_();
+
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     ConnectionButton(QWidget *parent_=nullptr);
 
-    bool eventFilter(QObject *obj_, QEvent *event_);
+    enumConnectionButtonStates getState() const;
 
-    void enterEvent(QEvent *event_);
-
-    void leaveEvent(QEvent *event_);
-
-    void paintEvent(QPaintEvent *event_);
-
-    void connectionAnimation();
-
-    void resumeAnimation();
-
-    void pauseAnimation();
-
-    void stopAnimation();
+    void setState(enumConnectionButtonStates state);
 
     void setTheme(const std::map<QString, QString> &style);
 
@@ -216,12 +222,13 @@ class FlatButton: public ICustomButton
     Q_OBJECT
 private:
 
-public:
-    FlatButton(QWidget *parent_=nullptr);
-
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    FlatButton(QWidget *parent_=nullptr);
 
     QString getText() const;
 
@@ -250,12 +257,13 @@ private:
 
     void setToggled_(bool checked);
 
-public:
-    PanelButton(QWidget *parent_=nullptr);
-
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    PanelButton(QWidget *parent_=nullptr);
 
     void startAnimation();
 
@@ -302,9 +310,7 @@ private:
 
     void setGlowDia_(qreal glow_dia);
 
-public:
-    FireButton(QWidget *parent_=nullptr);
-
+protected:
     void keyPressEvent(QKeyEvent *event_);
 
     void keyReleaseEvent(QKeyEvent *event_);
@@ -315,9 +321,12 @@ public:
 
     void paintEvent(QPaintEvent *event_);
 
-    void startGlowAnimation();
+public:
+    FireButton(QWidget *parent_=nullptr);
 
-    void stopGlowAnimation();
+    void startAnimation();
+
+    void stopAnimation();
 
     void setTheme(const std::map<QString, QString> &style);
 
@@ -349,7 +358,7 @@ private:
 
     QPropertyAnimation *badge_anim_;
 
-    QIcon icon_{":icons/speech-bubble.svg"};
+    QIcon icon_{":icons/speech-bubble.png"};
 
     void setBgColor_(QColor color);
 
@@ -365,14 +374,15 @@ private:
 
     void setNotifyNumber_(unsigned int notification_number);
 
-public:
-    BadgeButton(QWidget *parent_=nullptr);
+    void startAnimation_();
 
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
 
-    void badgeAnimation();
+public:
+    BadgeButton(QWidget *parent_=nullptr);
 
     unsigned int getNotifyNumber();
 
@@ -421,14 +431,15 @@ private:
 private slots:
     void clickedSlot_();
 
+protected:
+    bool eventFilter(QObject *obj_, QEvent *event_);
+
+    void paintEvent(QPaintEvent *event_);
+
 public:
     NavigationButton(QWidget *parent_=nullptr);
 
     NavigationButton(const ButtonType button_type, QWidget *parent_=nullptr);
-
-    bool eventFilter(QObject *obj_, QEvent *event_);
-
-    void paintEvent(QPaintEvent *event_);
 
     void showShadow_();
 

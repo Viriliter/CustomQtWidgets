@@ -34,10 +34,11 @@ private:
 
     void setDefaultForeColor_(const QColor &color);
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     ClassicLedIndicator(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void setTheme(const std::map<QString, QString> &style);
 
@@ -77,10 +78,11 @@ private:
 
     void setDefaultForeColor_(const QColor &color);
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     RealisticLedIndicator(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void setTheme(const std::map<QString, QString> &style);
 

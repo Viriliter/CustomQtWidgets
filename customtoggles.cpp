@@ -13,8 +13,8 @@ ToggleSwitch::ToggleSwitch(QWidget *parent_)
     this->setFixedWidth(60);
     this->setFixedHeight(30);
 
-    this->fore_color_ = WHITE_COLOR;
-    this->text_color_ = BLACK_COLOR;
+    this->fore_color_ = QColorConstants::White;
+    this->text_color_ = QColorConstants::Black;
 
     this->unchecked_color_ = QColor(185, 185, 185);
     this->checked_color_ = QColor(137, 218, 103);
@@ -261,12 +261,12 @@ bool DelayedToggleSwitchAndroid::eventFilter(QObject *obj_, QEvent *event_){
 
     if (obj_ == this and this->isEnabled()){
         if (event_->type() == QEvent::MouseButtonPress){
-            this->startWaitAnimation();
+            this->startAnimation_();
             this->is_mouse_pressed_ = true;
         }
 
         if (event_->type() == QEvent::MouseButtonRelease){
-            this->stopWaitAnimation();
+            this->stopAnimation_();
             this->is_mouse_pressed_ = false;
 
             if (this->progress_ == 100)
@@ -401,7 +401,7 @@ bool DelayedToggleSwitchAndroid::setChecked(bool value){
     this->repaint();
 };
 
-void DelayedToggleSwitchAndroid::startWaitAnimation(){
+void DelayedToggleSwitchAndroid::startAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running) return;
 
     this->wait_anim_->setDuration(1000);  // Miliseconds, default: 1000ms
@@ -418,20 +418,20 @@ void DelayedToggleSwitchAndroid::startWaitAnimation(){
     this->wait_anim_->start();
 };
 
-void DelayedToggleSwitchAndroid::stopWaitAnimation(){
+void DelayedToggleSwitchAndroid::stopAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running ||
         this->wait_anim_->state() == QPropertyAnimation::Paused){
         this->wait_anim_->stop();
     }
 };
 
-void DelayedToggleSwitchAndroid::resumeWaitAnimation(){
+void DelayedToggleSwitchAndroid::resumeAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Paused){
         this->wait_anim_->resume();
     }
 };
 
-void DelayedToggleSwitchAndroid::pauseWaitAnimation(){
+void DelayedToggleSwitchAndroid::pauseAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running){
         this->wait_anim_->pause();
     }
@@ -450,7 +450,7 @@ ToggleSwitchIOS::ToggleSwitchIOS(QWidget *parent_)
     this->setCheckable(true);
     this->setFixedWidth(100);
     this->setFixedHeight(30);
-    this->fore_color_ = WHITE_COLOR;  // Switch Color
+    this->fore_color_ = QColorConstants::White;  // Switch Color
     this->checked_color_ = GREEN_COLOR;
     this->unchecked_color_ = GRAY_COLOR;
 }
@@ -548,7 +548,7 @@ DelayedToggleSwitchIOS::DelayedToggleSwitchIOS(QWidget *parent_){
     this->setCheckable(true);
     this->setFixedWidth(100);
     this->setFixedHeight(30);
-    this->fore_color_ = WHITE_COLOR;  // Switch Color
+    this->fore_color_ = QColorConstants::White;  // Switch Color
     this->checked_color_ = GREEN_COLOR;
     this->unchecked_color_ = GRAY_COLOR;
 
@@ -559,12 +559,12 @@ bool DelayedToggleSwitchIOS::eventFilter(QObject *obj_, QEvent *event_){
 
     if (obj_ == this and this->isEnabled()){
         if (event_->type() == QEvent::MouseButtonPress){
-            this->startWaitAnimation();
+            this->startAnimation_();
             this->is_mouse_pressed_ = true;
         }
 
         if (event_->type() == QEvent::MouseButtonRelease){
-            this->stopWaitAnimation();
+            this->stopAnimation_();
             this->is_mouse_pressed_ = false;
 
             if (this->progress_ == 100)
@@ -687,7 +687,7 @@ bool DelayedToggleSwitchIOS::setChecked(bool value){
     this->repaint();
 };
 
-void DelayedToggleSwitchIOS::startWaitAnimation(){
+void DelayedToggleSwitchIOS::startAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running) return;
 
     this->wait_anim_->setDuration(1000);  // Miliseconds, default: 1000ms
@@ -704,20 +704,20 @@ void DelayedToggleSwitchIOS::startWaitAnimation(){
     this->wait_anim_->start();
 };
 
-void DelayedToggleSwitchIOS::stopWaitAnimation(){
+void DelayedToggleSwitchIOS::stopAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running ||
         this->wait_anim_->state() == QPropertyAnimation::Paused){
         this->wait_anim_->stop();
     }
 };
 
-void DelayedToggleSwitchIOS::resumeWaitAnimation(){
+void DelayedToggleSwitchIOS::resumeAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Paused){
         this->wait_anim_->resume();
     }
 };
 
-void DelayedToggleSwitchIOS::pauseWaitAnimation(){
+void DelayedToggleSwitchIOS::pauseAnimation_(){
     if (this->wait_anim_->state() == QPropertyAnimation::Running){
         this->wait_anim_->pause();
     }

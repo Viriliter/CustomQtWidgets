@@ -61,12 +61,13 @@ private:
     QString tooltip_;
     QPoint last_pos_;
 
+protected:
+    bool event(QEvent *event_);
+
 public:
     DynamicToolTipLabel(QWidget *parent_=nullptr);
 
     void setToolTip(const QString &tooltip);
-
-    bool event(QEvent *event_);
 };
 
 #endif // CUSTOMLABELS_H

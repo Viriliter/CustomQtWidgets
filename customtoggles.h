@@ -39,10 +39,11 @@ private:
 private slots:
     void clickedSlot_();
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     ToggleSwitch(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void setStates(const QString &state1, const QString &state2);
 
@@ -62,12 +63,13 @@ private:
 
     bool is_mouse_pressed_ = false;
 
-public:
-    ToggleSwitchAndroid(QWidget *parent_=nullptr);
-
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    ToggleSwitchAndroid(QWidget *parent_=nullptr);
 
     void setTheme(const std::map<QString, QString> &style);
 };
@@ -93,26 +95,27 @@ private:
 
     bool setChecked_(bool value);
 
-public:
-    DelayedToggleSwitchAndroid(QWidget *parent_=nullptr);
+    void startAnimation_();
 
+    void stopAnimation_();
+
+    void resumeAnimation_();
+
+    void pauseAnimation_();
+
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    DelayedToggleSwitchAndroid(QWidget *parent_=nullptr);
 
     void setTheme(const std::map<QString, QString> &style);
 
     bool isChecked() const;
 
     bool setChecked(bool value);
-
-    void startWaitAnimation();
-
-    void stopWaitAnimation();
-
-    void resumeWaitAnimation();
-
-    void pauseWaitAnimation();
 
 signals:
     void aboutToToggled();
@@ -129,12 +132,13 @@ private:
 
     bool is_mouse_pressed_ = false;
 
-public:
-    ToggleSwitchIOS(QWidget *parent_=nullptr);
-
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    ToggleSwitchIOS(QWidget *parent_=nullptr);
 
     void setTheme(const std::map<QString, QString> &style);
 
@@ -163,26 +167,27 @@ private:
 
     bool setChecked_(bool value);
 
-public:
-    DelayedToggleSwitchIOS(QWidget *parent_=nullptr);
+    void startAnimation_();
 
+    void stopAnimation_();
+
+    void resumeAnimation_();
+
+    void pauseAnimation_();
+
+protected:
     bool eventFilter(QObject *obj_, QEvent *event_);
 
     void paintEvent(QPaintEvent *event_);
+
+public:
+    DelayedToggleSwitchIOS(QWidget *parent_=nullptr);
 
     void setTheme(const std::map<QString, QString> &style);
 
     bool isChecked() const;
 
     bool setChecked(bool value);
-
-    void startWaitAnimation();
-
-    void stopWaitAnimation();
-
-    void resumeWaitAnimation();
-
-    void pauseWaitAnimation();
 
 signals:
     void aboutToToggled();

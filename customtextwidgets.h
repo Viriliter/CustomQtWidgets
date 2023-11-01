@@ -35,12 +35,13 @@ private:
     QString tooltip_;
     QPoint last_pos_;
 
+protected:
+    bool event(QEvent *event_);
+
 public:
     CustomLineEdit(QWidget *parent_=nullptr);
 
     void setToolTip(const QString &tooltip);
-
-    bool event(QEvent *event_);
 };
 
 class BorderedTextEdit: public QTextEdit
@@ -77,15 +78,15 @@ private:
 
     QString text_;
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     BorderedTextEdit(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void setTheme(const std::map<QString, QString> &style);
 
     void setText(const QString &text);
-
 };
 
 class BorderedTextLineEdit: public QLineEdit
@@ -122,10 +123,11 @@ private:
 
     QString text_;
 
+protected:
+    void paintEvent(QPaintEvent *event_);
+
 public:
     BorderedTextLineEdit(QWidget *parent_=nullptr);
-
-    void paintEvent(QPaintEvent *event_);
 
     void setTheme(const std::map<QString, QString> &style);
 

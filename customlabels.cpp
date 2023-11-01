@@ -4,8 +4,8 @@ HighlightLabel::HighlightLabel(QWidget *parent_)
 {
 
     this->base_fore_color_ = QColor(255, 0, 0);
-    this->base_bg_color_ = BLACK_COLOR;
-    this->border_color_ = WHITE_COLOR;
+    this->base_bg_color_ = QColorConstants::Black;
+    this->border_color_ = QColorConstants::White;
     this->unchecked_fore_color_ = this->base_fore_color_.darker(200);
     this->checked_fore_color_ = this->base_fore_color_;
 
@@ -36,6 +36,7 @@ HighlightLabel::HighlightLabel(QWidget *parent_)
     this->setFont(this->text_font_);
 
 }
+
 bool HighlightLabel::getIsChecked_() const{
     return this->is_checked_;
 };

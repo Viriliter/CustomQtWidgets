@@ -105,7 +105,7 @@ void CustomProgressBar::setProgressText_(const QString &text){
     this->repaint();
 };
 
-void CustomProgressBar::startProgressAnimation(qreal start_value, qreal end_value,
+void CustomProgressBar::startAnimation(qreal start_value, qreal end_value,
                                                qint64 duration, qint64 count){
     if (this->progress_anim_->state() == QPropertyAnimation::Running) return;
 
@@ -117,7 +117,7 @@ void CustomProgressBar::startProgressAnimation(qreal start_value, qreal end_valu
     this->progress_anim_->start();
 };
 
-void CustomProgressBar::stopProgressAnimation(){
+void CustomProgressBar::stopAnimation(){
     if (this->progress_anim_->state() == QPropertyAnimation::Running ||
         this->progress_anim_->state() == QPropertyAnimation::Paused){
         this->progress_ = 0;
@@ -126,14 +126,14 @@ void CustomProgressBar::stopProgressAnimation(){
     }
 };
 
-void CustomProgressBar::pauseProgressAnimation(){
+void CustomProgressBar::pauseAnimation(){
     if (this->progress_anim_->state() == QPropertyAnimation::Running){
         this->progress_anim_->pause();
         emit paused();
     }
 };
 
-void CustomProgressBar::resumeProgressAnimation(){
+void CustomProgressBar::resumeAnimation(){
     if (this->progress_anim_->state() == QPropertyAnimation::Paused) {
         this->progress_anim_->resume();
         emit resumed();
@@ -169,6 +169,15 @@ void CustomProgressBar::setProgressVisibity(bool visibility){
     this->progress_visibility_ = visibility;
 };
 
+void CustomProgressBar::setProgress(qint64 progress, QString text){
+    this->setProgressText_(text);
+    this->setProgress_(progress);
+};
+
+qint64 CustomProgressBar::getProgress() const{
+    return getProgress_();
+};
+
 void CustomProgressBar::setTheme(const std::map<QString, QString> &style){
     QColor foreground, background, progress;
 
@@ -181,7 +190,6 @@ void CustomProgressBar::setTheme(const std::map<QString, QString> &style){
     this->progress_color_ = progress;
     this->repaint();
 };
-
 
 
 CustomCircularProgressBar::CustomCircularProgressBar(QWidget *parent_)
@@ -356,6 +364,15 @@ void CustomCircularProgressBar::animateFlash(qint64 duration, qint64 count){
 
 void CustomCircularProgressBar::setProgressVisibity(bool visibility){
     this->progress_visibility_ = visibility;
+};
+
+void CustomCircularProgressBar::setProgress(qint64 progress, QString text){
+    this->setProgressText_(text);
+    this->setProgress_(progress);
+};
+
+qint64 CustomCircularProgressBar::getProgress() const{
+    return getProgress_();
 };
 
 void CustomCircularProgressBar::setTheme(const std::map<QString, QString> &style){

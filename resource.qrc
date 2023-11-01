@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/speech-bubble.svg</file>
+        <file>icons/speech-bubble.png</file>
     </qresource>
 </RCC>

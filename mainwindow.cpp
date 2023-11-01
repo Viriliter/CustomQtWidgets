@@ -155,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent)
     groupB_custom_buttons->setObjectName(QString::fromUtf8("groupB_custom_buttons"));
     QGridLayout *layout_custom_buttons = new QGridLayout{};
 
-    connectionButton->setFixedSize(QSize(150,150));
+    connectionButton->setFixedSize(QSize(50,50));
     fireButton->setFixedSize(QSize(150,150));
     panelButton->setFixedSize(QSize(100,50));
     backNavigationButton->setFixedSize(QSize(170,44));
@@ -205,7 +205,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout_custom_loading_bars->addWidget(labelCircularProgressBar, 1, 0, 1, 1);
     layout_custom_loading_bars->addWidget(circularProgressBar, 1, 1, 1, 1);
 
-    this->progressBar->startProgressAnimation(0, 1, 5000, -1);
+    this->progressBar->startAnimation(0, 1, 5000, -1);
     this->circularProgressBar->startProgressAnimation(0, 1, 5000, -1);
 
     groupB_custom_loading_bars->setLayout(layout_custom_loading_bars);
@@ -246,12 +246,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::keyPressEvent(QKeyEvent *event_){
     if (event_->key() == Qt::Key_Shift)
-        this->fireButton->startGlowAnimation();
+        this->fireButton->startAnimation();
     };
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event_){
     if (event_->key() == Qt::Key_Shift)
-        this->fireButton->stopGlowAnimation();
+        this->fireButton->stopAnimation();
     };
 
 void MainWindow::clickedBadgeButton() noexcept{
@@ -259,7 +259,19 @@ void MainWindow::clickedBadgeButton() noexcept{
 }
 
 void MainWindow::clickedConnectionButton() noexcept{
-    this->connectionButton->connectionAnimation();
+    if (this->connectionButton->getState() == enumConnectionButtonStates::Default){
+        this->connectionButton->setState(enumConnectionButtonStates::Connecting);
+    }
+    else if (this->connectionButton->getState() == enumConnectionButtonStates::Connecting){
+        this->connectionButton->setState(enumConnectionButtonStates::Connected);
+    }
+    else if (this->connectionButton->getState() == enumConnectionButtonStates::Connected){
+        this->connectionButton->setState(enumConnectionButtonStates::Disconnected);
+    }
+    else if (this->connectionButton->getState() == enumConnectionButtonStates::Disconnected){
+        this->connectionButton->setState(enumConnectionButtonStates::Default);
+    }
+
 }
 
 void MainWindow::lockedSwipedButton() noexcept{
