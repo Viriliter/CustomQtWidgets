@@ -166,12 +166,12 @@ class ConnectionButton: public ICustomButton
 {
     Q_OBJECT
     Q_PROPERTY(std::pair<QColor, QColor> foreColors READ getForeColors_ WRITE setForeColors_);
-    Q_PROPERTY(int swapColorFlag READ getSwapColorFlag_ WRITE setSwapColorFlag_);
+    Q_PROPERTY(qreal pathOffset READ getPathOffset_ WRITE setPathOffset_);
 private:
     QColor fore_color_1_;
     QColor fore_color_2_;
 
-    int swap_color_flag_ = 0;
+    qreal path_offset_ = 0.0;
     bool is_pressed_ = false;
 
     QPropertyAnimation *connection_anim_;
@@ -184,9 +184,9 @@ private:
 
     void setForeColors_(const std::pair<QColor, QColor> colors);
 
-    int getSwapColorFlag_() const;
+    qreal getPathOffset_() const;
 
-    void setSwapColorFlag_(int flag);
+    void setPathOffset_(qreal offset);
 
 public:
     ConnectionButton(QWidget *parent_=nullptr);

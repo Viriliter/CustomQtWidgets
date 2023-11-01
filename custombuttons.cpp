@@ -131,12 +131,12 @@ ConnectionButton::ConnectionButton(QWidget *parent_)
 
     this->setCheckable(true);
 
-    this->fore_color_1_ = WHITE_COLOR;
+    this->fore_color_1_ = FAINT_GRAY_COLOR;
     this->fore_color_2_ = GREEN_COLOR;
-    this->bg_color_ = QColor{26,27,20,255};
+    this->bg_color_ = DARK_GRAY_COLOR;
     this->bg_default_color_ = this->bg_color_;
 
-    connection_anim_ = new QPropertyAnimation{this, "swapColorFlag", this};
+    connection_anim_ = new QPropertyAnimation{this, "pathOffset", this};
 }
 
 bool ConnectionButton::eventFilter(QObject *obj_, QEvent *event_){
@@ -163,49 +163,55 @@ void ConnectionButton::paintEvent(QPaintEvent *event_){
     QRect full_rect{};
     full_rect.setSize(QSize(this->width(), this->height()));
 
+    QColor bg_color;
+    if (this->underMouse()) bg_color = this->bg_color_.lighter(150);
+    else bg_color = this->bg_color_;
+
     // Draw Background
     QRect rect{};
     rect.setSize(QSize((int) size, (int) size));
-    painter.setBrush(QBrush(this->bg_color_));
+    painter.setBrush(QBrush(bg_color));
     painter.drawRoundedRect(rect, radius, radius);
 
-    //Draw Icon Rect
+    // Draw Icon
     QRect icon_rect{};
     int icon_width = size*0.8;
     int icon_height = icon_width;
     icon_rect.setSize(QSize(icon_width, icon_height));
     painter.translate((size-icon_width)/2, (size-icon_height)/2);
 
-    //Draw Arrow 1
-    QPainterPath upper_icon_path;
-    upper_icon_path.moveTo(icon_rect.left(), icon_rect.top() + icon_rect.height()/6);
-    upper_icon_path.lineTo(icon_rect.left() + icon_rect.width()*(2/3), icon_rect.top() + icon_rect.height()/6);
-    upper_icon_path.lineTo(icon_rect.left() + icon_rect.width()*(2/3), icon_rect.top());
-    upper_icon_path.lineTo(icon_rect.right(), icon_rect.top() + icon_rect.height()/4);
-    upper_icon_path.lineTo(icon_rect.left() + icon_rect.width()*(2/3), icon_rect.top() + icon_rect.height()/2);
-    upper_icon_path.lineTo(icon_rect.left() + icon_rect.width()*(2/3), icon_rect.top() + icon_rect.height()/3);
-    upper_icon_path.lineTo(icon_rect.left(), icon_rect.top() + icon_rect.height()/6);
+    QPainterPath path;
+    QPen pen{this->fore_color_1_, 5, Qt::PenStyle::SolidLine, Qt::FlatCap};
+    QPen pen_animation{this->fore_color_2_, 5, Qt::PenStyle::SolidLine, Qt::RoundCap};
 
-    if (this->swap_color_flag_ == 1)
-        painter.fillPath(upper_icon_path, this->fore_color_2_);
-    else
-        painter.fillPath(upper_icon_path, this->fore_color_1_);
+    path.moveTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.1875);  // 1
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.1875);  // 2
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top()); // 3
+    path.lineTo(icon_rect.left()                         , icon_rect.top() + icon_rect.height()*0.3125);  // 4
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.686);  // 5
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.5); // 6
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.5);  // 7
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.3125);  // 8
+    path.lineTo(icon_rect.right()                        , icon_rect.top() + icon_rect.height()*0.686);  // 9
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.bottom());  // 10
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.71, icon_rect.top() + icon_rect.height()*0.8125);  // 11
+    path.lineTo(icon_rect.left() + icon_rect.width()*0.29, icon_rect.top() + icon_rect.height()*0.8125);  // 12
 
-    //Draw Arrow 2
-    QPainterPath lower_icon_path;
-    lower_icon_path.moveTo(icon_rect.right(), icon_rect.bottom() - icon_rect.height()/6);
-    lower_icon_path.lineTo(icon_rect.right() - icon_rect.width()*(2/3), icon_rect.bottom() - icon_rect.height()/6);
-    lower_icon_path.lineTo(icon_rect.right() - icon_rect.width()*(2/3), icon_rect.bottom());
-    lower_icon_path.lineTo(icon_rect.left(), icon_rect.bottom() - icon_rect.height()/4);
-    lower_icon_path.lineTo(icon_rect.right() - icon_rect.width()*(2/3), icon_rect.bottom() - icon_rect.height()/2);
-    lower_icon_path.lineTo(icon_rect.right() - icon_rect.width()*(2/3), icon_rect.bottom() - icon_rect.height()/3);
-    lower_icon_path.lineTo(icon_rect.right(), icon_rect.bottom() - icon_rect.height()/3);
-    lower_icon_path.lineTo(icon_rect.right(), icon_rect.bottom() - icon_rect.height()/6);
+    QPainterPath path_animation{path};
+    qreal pattern_length = path_animation.length() * this->path_offset_;
+    QList<qreal> pattern;
 
-    if (this->swap_color_flag_ == 1)
-        painter.fillPath(lower_icon_path, this->fore_color_1_);
-    else
-        painter.fillPath(lower_icon_path, this->fore_color_2_);
+    pattern << path_animation.length()*0.5 << path_animation.length()*0.5 << path_animation.length()*0.5 << path_animation.length()*0.5;
+    pen_animation.setDashPattern(pattern);
+    pen_animation.setDashOffset((path_animation.length()*.5-pattern_length));
+
+    painter.setPen(pen);
+    painter.drawPath(path);
+    painter.setPen(pen);
+    painter.setPen(pen_animation);
+    painter.drawPath(path_animation);
+    painter.setPen(pen);
+
 };
 
 void ConnectionButton::setBgColor_(const QColor color){
@@ -224,24 +230,24 @@ void ConnectionButton::setForeColors_(std::pair<QColor, QColor> colors){
     this->repaint();
 };
 
-int ConnectionButton::getSwapColorFlag_() const{
-    return this->swap_color_flag_;
+qreal ConnectionButton::getPathOffset_() const{
+    return this->path_offset_;
 };
 
-void ConnectionButton::setSwapColorFlag_(int flag){
-    this->swap_color_flag_ = flag;
+void ConnectionButton::setPathOffset_(qreal offset){
+    this->path_offset_ = offset;
     this->repaint();
 };
 
 void ConnectionButton::connectionAnimation(){
     if (this->connection_anim_->state() == QPropertyAnimation::Running) return;
 
-    this->connection_anim_->setDuration(1000);  // Miliseconds, default: 250ms
+    this->connection_anim_->setDuration(2000);  // Miliseconds, default: 250ms
     this->connection_anim_->setLoopCount(-1);  // loop count of the animation, default: -1 (runs continously)
 
-    this->connection_anim_->setStartValue(1);
-    this->connection_anim_->setKeyValueAt(0.5, 1);  // Reverse colors
-    this->connection_anim_->setEndValue(0);
+    this->connection_anim_->setStartValue(0.0);
+    this->connection_anim_->setKeyValueAt(0.5, 0.5);
+    this->connection_anim_->setEndValue(1.0);
     this->connection_anim_->start();
 };
 

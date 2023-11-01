@@ -155,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent)
     groupB_custom_buttons->setObjectName(QString::fromUtf8("groupB_custom_buttons"));
     QGridLayout *layout_custom_buttons = new QGridLayout{};
 
-    connectionButton->setFixedSize(QSize(50,50));
+    connectionButton->setFixedSize(QSize(150,150));
     fireButton->setFixedSize(QSize(150,150));
     panelButton->setFixedSize(QSize(100,50));
     backNavigationButton->setFixedSize(QSize(170,44));
